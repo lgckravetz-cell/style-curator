@@ -78,7 +78,7 @@ function OnboardingFlow() {
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify(answers));
   }, [answers]);
 
-  const current = STEPS[step];
+  const current = STEPS[step]!;
   const progress = ((step + 1) / STEPS.length) * 100;
 
   function choose(option: string) {
