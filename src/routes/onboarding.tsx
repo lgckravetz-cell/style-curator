@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, Camera, ChevronRight, Image, User, X } from "lucide-react";
+import { ArrowLeft, Camera, Check, ChevronRight, Image, User, X } from "lucide-react";
 
 export const Route = createFileRoute("/onboarding")({
   head: () => ({
@@ -86,7 +86,11 @@ function OnboardingFlow() {
   }, [answers]);
 
   const isSelfieStep = step === STEPS.length;
-  const current = isSelfieStep ? null : STEPS[step]!;
+  const isProcessingStep = step === STEPS.length + 1;
+  const isPlaceholderStep = step === STEPS.length + 2;
+  const showTopBar = step <= STEPS.length;
+  const current =
+    isSelfieStep || isProcessingStep || isPlaceholderStep ? null : STEPS[step]!;
   const progress = ((step + 1) / TOTAL_STEPS) * 100;
 
   function choose(option: string) {
@@ -96,9 +100,9 @@ function OnboardingFlow() {
   }
 
   function finishSelfie(value: string) {
-    // Salva o resultado da selfie e encerra o fluxo atual.
-    // A próxima etapa do onboarding será construída depois.
-    setAnswers({ ...answers, selfie: value });
+    // Salva o resultado da selfie e avança para a etapa de processamento.
+    setAnswers((prev) => ({ ...prev, selfie: value }));
+    setStep((s) => s + 1);
   }
 
   function goBack() {
@@ -107,26 +111,31 @@ function OnboardingFlow() {
 
   return (
     <main className="flex min-h-screen flex-col bg-background px-6 pb-10 pt-6">
-      {/* Topo: voltar + progresso */}
-      <div className="flex items-center gap-4">
-        <button
-          type="button"
-          onClick={goBack}
-          disabled={step === 0}
-          aria-label="Voltar"
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-border bg-card text-foreground transition-opacity disabled:opacity-30"
-        >
-          <ArrowLeft size={20} />
-        </button>
-        <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
-          <div
-            className="h-full rounded-full bg-primary transition-all duration-300"
-            style={{ width: `${progress}%` }}
-          />
+      {showTopBar && (
+        <div className="flex items-center gap-4">
+          <button
+            type="button"
+            onClick={goBack}
+            disabled={step === 0}
+            aria-label="Voltar"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-border bg-card text-foreground transition-opacity disabled:opacity-30"
+          >
+            <ArrowLeft size={20} />
+          </button>
+          <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
+            <div
+              className="h-full rounded-full bg-primary transition-all duration-300"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
         </div>
-      </div>
+      )}
 
-      {isSelfieStep ? (
+      {isProcessingStep ? (
+        <ProcessingStep onDone={() => setStep((s) => s + 1)} />
+      ) : isPlaceholderStep ? (
+        <PlaceholderStep />
+      ) : isSelfieStep ? (
         <SelfieStep onDone={finishSelfie} />
       ) : (
         <>
