@@ -29,9 +29,6 @@ export const Route = createFileRoute("/onboarding")({
   component: OnboardingFlow,
 });
 
-// Índice da etapa do paywall dentro do fluxo (para deep-link, ex: Perfil → Assinar o Pro)
-export const PAYWALL_STEP = 7;
-
 const STORAGE_KEY = "veste_onboarding_answers";
 
 interface Step {

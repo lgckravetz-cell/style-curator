@@ -10,7 +10,7 @@ import {
   Share2,
 } from "lucide-react";
 import { toast } from "sonner";
-import { lovable } from "@/integrations/lovable";
+import { supabase } from "@/integrations/supabase/client";
 const PAYWALL_STEP = 7;
 
 export const Route = createFileRoute("/app/configuracoes")({
@@ -67,7 +67,7 @@ function SettingsScreen() {
 
   async function signOut() {
     try {
-      await lovable.auth.signOut();
+      await supabase.auth.signOut();
       navigate({ to: "/" });
     } catch {
       toast.error("Não foi possível sair. Tente novamente.");
