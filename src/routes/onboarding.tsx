@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, Camera, Check, ChevronRight, Image, User, X } from "lucide-react";
+import lookFlatlay from "@/assets/look-flatlay.jpg";
+import paywallLifestyle from "@/assets/paywall-lifestyle.jpg";
 
 export const Route = createFileRoute("/onboarding")({
   head: () => ({
@@ -87,10 +89,18 @@ function OnboardingFlow() {
 
   const isSelfieStep = step === STEPS.length;
   const isProcessingStep = step === STEPS.length + 1;
-  const isPlaceholderStep = step === STEPS.length + 2;
+  const isRevealStep = step === STEPS.length + 2;
+  const isPaywallStep = step === STEPS.length + 3;
+  const isHomeStep = step === STEPS.length + 4;
   const showTopBar = step <= STEPS.length;
   const current =
-    isSelfieStep || isProcessingStep || isPlaceholderStep ? null : STEPS[step]!;
+    isSelfieStep ||
+    isProcessingStep ||
+    isRevealStep ||
+    isPaywallStep ||
+    isHomeStep
+      ? null
+      : STEPS[step]!;
   const progress = ((step + 1) / TOTAL_STEPS) * 100;
 
   function choose(option: string) {
@@ -133,8 +143,12 @@ function OnboardingFlow() {
 
       {isProcessingStep ? (
         <ProcessingStep onDone={() => setStep((s) => s + 1)} />
-      ) : isPlaceholderStep ? (
-        <PlaceholderStep />
+      ) : isRevealStep ? (
+        <RevealStep onContinue={() => setStep((s) => s + 1)} />
+      ) : isPaywallStep ? (
+        <PaywallStep onClose={() => setStep((s) => s + 1)} />
+      ) : isHomeStep ? (
+        <HomePlaceholder />
       ) : isSelfieStep ? (
         <SelfieStep onDone={finishSelfie} />
       ) : (
