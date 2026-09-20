@@ -400,3 +400,117 @@ function BottomSheet({
     </div>
   );
 }
+
+function ProcessingStep({ onDone }: { onDone: () => void }) {
+  const [progress, setProgress] = useState(10);
+  const radius = 52;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (progress / 100) * circumference;
+
+  useEffect(() => {
+    const duration = 3000; // 3s (entre 2 e 4s)
+    const startPct = 10;
+    const endPct = 100;
+    const startTime = performance.now();
+    let raf = 0;
+
+    function tick(now: number) {
+      const elapsed = now - startTime;
+      const t = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - t, 3); // ease-out
+      const pct = Math.round(startPct + (endPct - startPct) * eased);
+      setProgress(pct);
+      if (t < 1) {
+        raf = requestAnimationFrame(tick);
+      } else {
+        setTimeout(onDone, 500);
+      }
+    }
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [onDone]);
+
+  const task1Done = true; // concluído desde o início
+  const task2Done = progress >= 50; // marca na metade
+  const task3Done = progress >= 100; // marca no final
+
+  return (
+    <div className="flex flex-1 flex-col items-center justify-center text-center">
+      {/* Anel de progresso (donut) */}
+      <div className="relative h-32 w-32">
+        <svg className="h-full w-full -rotate-90" viewBox="0 0 120 120">
+          <circle
+            cx="60"
+            cy="60"
+            r={radius}
+            fill="none"
+            strokeWidth="10"
+            className="text-muted"
+            stroke="currentColor"
+          />
+          <circle
+            cx="60"
+            cy="60"
+            r={radius}
+            fill="none"
+            strokeWidth="10"
+            strokeLinecap="round"
+            className="text-primary"
+            stroke="currentColor"
+            strokeDasharray={circumference}
+            strokeDashoffset={offset}
+            style={{ transition: "stroke-dashoffset 0.12s linear" }}
+          />
+        </svg>
+        <div className="absolute inset-0 flex items-center justify-center">
+          <span className="font-display text-2xl font-extrabold text-foreground">
+            {progress}%
+          </span>
+        </div>
+      </div>
+
+      <p className="mt-4 text-sm text-muted-foreground">Só um momento...</p>
+
+      <h1 className="mt-6 font-display text-2xl font-extrabold leading-tight tracking-tight text-foreground">
+        Estamos montando os melhores looks para você
+      </h1>
+
+      <div className="mt-8 flex w-full max-w-sm flex-col gap-3 text-left">
+        <TaskItem done={task1Done} label="Encontrando seu estilo" />
+        <TaskItem done={task2Done} label="Explorando as tendências" />
+        <TaskItem done={task3Done} label="Montando seus looks perfeitos" />
+      </div>
+    </div>
+  );
+}
+
+function TaskItem({ done, label }: { done: boolean; label: string }) {
+  return (
+    <div className="flex items-center gap-3">
+      <span
+        className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full transition-colors ${
+          done ? "bg-success text-white" : "border border-border bg-card text-transparent"
+        }`}
+      >
+        <Check size={14} strokeWidth={3} />
+      </span>
+      <span className={`text-base ${done ? "text-foreground" : "text-muted-foreground"}`}>
+        {label}
+      </span>
+    </div>
+  );
+}
+
+function PlaceholderStep() {
+  // Placeholder simples para a próxima etapa do onboarding (a ser construída).
+  return (
+    <div className="flex flex-1 flex-col items-center justify-center text-center">
+      <h1 className="font-display text-2xl font-extrabold text-foreground">
+        Quase lá!
+      </h1>
+      <p className="mt-3 text-sm text-muted-foreground">
+        A próxima etapa do onboarding será construída em breve.
+      </p>
+    </div>
+  );
+}
