@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { Camera, Image, Loader2, Plus, Shirt, X } from "lucide-react";
 import { toast } from "sonner";
@@ -100,19 +100,27 @@ function WardrobeScreen() {
         /* Grade de peças */
         <div className="mt-6 grid grid-cols-3 gap-3">
           {pieces.map((piece) => (
-            <div
-              key={piece.id}
-              className="relative aspect-square overflow-hidden rounded-2xl bg-muted"
-            >
-              <img
-                src={piece.src}
-                alt="Peça do guarda-roupa"
-                className="h-full w-full object-cover"
-              />
-              {piece.processing && (
-                <div className="absolute inset-0 flex items-center justify-center bg-foreground/30">
-                  <Loader2 size={28} className="animate-spin text-white" />
-                </div>
+            <div key={piece.id} className="flex flex-col gap-2">
+              <div className="relative aspect-square overflow-hidden rounded-2xl bg-muted">
+                <img
+                  src={piece.src}
+                  alt="Peça do guarda-roupa"
+                  className="h-full w-full object-cover"
+                />
+                {piece.processing && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-foreground/30">
+                    <Loader2 size={28} className="animate-spin text-white" />
+                  </div>
+                )}
+              </div>
+              {!piece.processing && (
+                <Link
+                  to="/app/provador"
+                  search={{ peca: piece.id }}
+                  className="flex min-h-[36px] items-center justify-center rounded-full border border-border bg-card text-xs font-semibold text-foreground"
+                >
+                  Provar
+                </Link>
               )}
             </div>
           ))}
