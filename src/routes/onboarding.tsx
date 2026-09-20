@@ -24,7 +24,7 @@ export const Route = createFileRoute("/onboarding")({
     ],
   }),
   validateSearch: (search: Record<string, unknown>) => ({
-    step: typeof search.step === "number" ? search.step : undefined,
+    step: typeof search["step"] === "number" ? (search["step"] as number) : undefined,
   }),
   component: OnboardingFlow,
 });
