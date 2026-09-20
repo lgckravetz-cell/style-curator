@@ -10,11 +10,23 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppRouteRouteImport } from './routes/app/route'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as AppIndexRouteImport } from './routes/app/index'
+import { Route as AppEstilistaRouteImport } from './routes/app/estilista'
+import { Route as AppGuardaRoupaRouteImport } from './routes/app/guarda-roupa'
+import { Route as AppInspoRouteImport } from './routes/app/inspo'
+import { Route as AppLooksRouteImport } from './routes/app/looks'
+import { Route as AppPerfilRouteImport } from './routes/app/perfil'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppRouteRoute = AppRouteRouteImport.update({
+  id: '/app',
+  path: '/app',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OnboardingRoute = OnboardingRouteImport.update({
@@ -22,30 +34,108 @@ const OnboardingRoute = OnboardingRouteImport.update({
   path: '/onboarding',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppIndexRoute = AppIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppEstilistaRoute = AppEstilistaRouteImport.update({
+  id: '/estilista',
+  path: '/estilista',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppGuardaRoupaRoute = AppGuardaRoupaRouteImport.update({
+  id: '/guarda-roupa',
+  path: '/guarda-roupa',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppInspoRoute = AppInspoRouteImport.update({
+  id: '/inspo',
+  path: '/inspo',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppLooksRoute = AppLooksRouteImport.update({
+  id: '/looks',
+  path: '/looks',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppPerfilRoute = AppPerfilRouteImport.update({
+  id: '/perfil',
+  path: '/perfil',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/app': typeof AppRouteRouteWithChildren
   '/onboarding': typeof OnboardingRoute
+  '/app/estilista': typeof AppEstilistaRoute
+  '/app/guarda-roupa': typeof AppGuardaRoupaRoute
+  '/app/inspo': typeof AppInspoRoute
+  '/app/looks': typeof AppLooksRoute
+  '/app/perfil': typeof AppPerfilRoute
+  '/app/': typeof AppIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/onboarding': typeof OnboardingRoute
+  '/app/estilista': typeof AppEstilistaRoute
+  '/app/guarda-roupa': typeof AppGuardaRoupaRoute
+  '/app/inspo': typeof AppInspoRoute
+  '/app/looks': typeof AppLooksRoute
+  '/app/perfil': typeof AppPerfilRoute
+  '/app': typeof AppIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/app': typeof AppRouteRouteWithChildren
   '/onboarding': typeof OnboardingRoute
+  '/app/estilista': typeof AppEstilistaRoute
+  '/app/guarda-roupa': typeof AppGuardaRoupaRoute
+  '/app/inspo': typeof AppInspoRoute
+  '/app/looks': typeof AppLooksRoute
+  '/app/perfil': typeof AppPerfilRoute
+  '/app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/onboarding'
+  fullPaths:
+    | '/'
+    | '/app'
+    | '/onboarding'
+    | '/app/estilista'
+    | '/app/guarda-roupa'
+    | '/app/inspo'
+    | '/app/looks'
+    | '/app/perfil'
+    | '/app/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/onboarding'
-  id: '__root__' | '/' | '/onboarding'
+  to:
+    | '/'
+    | '/onboarding'
+    | '/app/estilista'
+    | '/app/guarda-roupa'
+    | '/app/inspo'
+    | '/app/looks'
+    | '/app/perfil'
+    | '/app'
+  id:
+    | '__root__'
+    | '/'
+    | '/app'
+    | '/onboarding'
+    | '/app/estilista'
+    | '/app/guarda-roupa'
+    | '/app/inspo'
+    | '/app/looks'
+    | '/app/perfil'
+    | '/app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRouteRoute: typeof AppRouteRouteWithChildren
   OnboardingRoute: typeof OnboardingRoute
 }
 
@@ -58,6 +148,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/onboarding': {
       id: '/onboarding'
       path: '/onboarding'
@@ -65,11 +162,76 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OnboardingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app/': {
+      id: '/app/'
+      path: '/'
+      fullPath: '/app/'
+      preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/app/estilista': {
+      id: '/app/estilista'
+      path: '/estilista'
+      fullPath: '/app/estilista'
+      preLoaderRoute: typeof AppEstilistaRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/app/guarda-roupa': {
+      id: '/app/guarda-roupa'
+      path: '/guarda-roupa'
+      fullPath: '/app/guarda-roupa'
+      preLoaderRoute: typeof AppGuardaRoupaRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/app/inspo': {
+      id: '/app/inspo'
+      path: '/inspo'
+      fullPath: '/app/inspo'
+      preLoaderRoute: typeof AppInspoRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/app/looks': {
+      id: '/app/looks'
+      path: '/looks'
+      fullPath: '/app/looks'
+      preLoaderRoute: typeof AppLooksRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/app/perfil': {
+      id: '/app/perfil'
+      path: '/perfil'
+      fullPath: '/app/perfil'
+      preLoaderRoute: typeof AppPerfilRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
   }
 }
 
+interface AppRouteRouteChildren {
+  AppEstilistaRoute: typeof AppEstilistaRoute
+  AppGuardaRoupaRoute: typeof AppGuardaRoupaRoute
+  AppInspoRoute: typeof AppInspoRoute
+  AppLooksRoute: typeof AppLooksRoute
+  AppPerfilRoute: typeof AppPerfilRoute
+  AppIndexRoute: typeof AppIndexRoute
+}
+
+const AppRouteRouteChildren: AppRouteRouteChildren = {
+  AppEstilistaRoute: AppEstilistaRoute,
+  AppGuardaRoupaRoute: AppGuardaRoupaRoute,
+  AppInspoRoute: AppInspoRoute,
+  AppLooksRoute: AppLooksRoute,
+  AppPerfilRoute: AppPerfilRoute,
+  AppIndexRoute: AppIndexRoute,
+}
+
+const AppRouteRouteWithChildren = AppRouteRoute._addFileChildren(
+  AppRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRouteRoute: AppRouteRouteWithChildren,
   OnboardingRoute: OnboardingRoute,
 }
 export const routeTree = rootRouteImport
