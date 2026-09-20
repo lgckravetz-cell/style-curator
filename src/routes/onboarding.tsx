@@ -23,8 +23,13 @@ export const Route = createFileRoute("/onboarding")({
       { name: "twitter:card", content: "summary" },
     ],
   }),
+  validateSearch: (search: Record<string, unknown>) => ({
+    step: typeof search.step === "number" ? search.step : undefined,
+  }),
   component: OnboardingFlow,
 });
+
+export const PAYWALL_STEP = STEPS.length + 3;
 
 const STORAGE_KEY = "veste_onboarding_answers";
 
@@ -81,7 +86,8 @@ function loadAnswers(): Record<string, string> {
 
 function OnboardingFlow() {
   const navigate = useNavigate();
-  const [step, setStep] = useState(0);
+  const { step: initialStep } = Route.useSearch();
+  const [step, setStep] = useState(initialStep ?? 0);
   const [answers, setAnswers] = useState<Record<string, string>>(loadAnswers);
 
   useEffect(() => {
