@@ -1,9 +1,14 @@
 # Roadmap
 
-- [ ] Corrigir erros de tipagem na tela Estilista e validar no preview
-- [ ] Provador Virtual: tela acessada pelo botão "Provar" em cada peça do Guarda-roupa
-  - Avatar/selfie (placeholder de silhueta se não houver) + peça sobreposta
-  - Loading simulado 2-3s com skeleton "Provando..."
-  - Botões "Salvar no histórico" e "Provar outra peça"
-  - Erro simulado (botão escondido "Simular erro") com mensagem + retry
-- [ ] Tela "Histórico de provas" (a partir do Provador e/ou Perfil): grade de provas salvas; vazio: "Nenhuma prova ainda"
+## Concluído
+- [x] Tela Estilista (chat) — mensagens simuladas, cards de produto, guarda-roupa vazio
+- [x] Provador Virtual — loading skeleton, resultado, salvar no histórico, erro com retry
+- [x] Histórico de provas — grade 2 colunas, link no Perfil
+- [x] Correções de tipagem (shimmer, button icon-sm) — build OK
+
+## A fazer (futuro)
+- [ ] Integração real de IA (chat Estilista, classificação de peças, provador virtual)
+- [ ] Integração real de assinatura (paywall com valores reais)
+- [ ] Nome real do app ("Veste" é placeholder)
+- [ ] Páginas /termos e /privacidade
+- [ ] Telas Inspo, Looks e Perfil (conteúdo real)
