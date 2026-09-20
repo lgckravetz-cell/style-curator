@@ -56,6 +56,10 @@ const INITIAL_MESSAGES: ChatMessage[] = [
   { id: "welcome", role: "assistant", kind: "text", text: WELCOME },
 ];
 
+type DistributiveOmit<T, K extends PropertyKey> = T extends unknown
+  ? Omit<T, K>
+  : never;
+
 function StylistScreen() {
   const wardrobe = useWardrobePieces();
   const [messages, setMessages] = useState<ChatMessage[]>(INITIAL_MESSAGES);
@@ -65,7 +69,7 @@ function StylistScreen() {
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const typingTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  function push(msg: Omit<ChatMessage, "id">) {
+  function push(msg: DistributiveOmit<ChatMessage, "id">) {
     setMessages((prev) => [...prev, { ...msg, id: crypto.randomUUID() } as ChatMessage]);
   }
 
