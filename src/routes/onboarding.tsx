@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, Camera, Check, ChevronRight, Image, User, X } from "lucide-react";
 import lookFlatlay from "@/assets/look-flatlay.jpg";
@@ -80,6 +80,7 @@ function loadAnswers(): Record<string, string> {
 }
 
 function OnboardingFlow() {
+  const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>(loadAnswers);
 
@@ -91,14 +92,9 @@ function OnboardingFlow() {
   const isProcessingStep = step === STEPS.length + 1;
   const isRevealStep = step === STEPS.length + 2;
   const isPaywallStep = step === STEPS.length + 3;
-  const isHomeStep = step === STEPS.length + 4;
   const showTopBar = step <= STEPS.length;
   const current =
-    isSelfieStep ||
-    isProcessingStep ||
-    isRevealStep ||
-    isPaywallStep ||
-    isHomeStep
+    isSelfieStep || isProcessingStep || isRevealStep || isPaywallStep
       ? null
       : STEPS[step]!;
   const progress = ((step + 1) / TOTAL_STEPS) * 100;
@@ -146,9 +142,7 @@ function OnboardingFlow() {
       ) : isRevealStep ? (
         <RevealStep onContinue={() => setStep((s) => s + 1)} />
       ) : isPaywallStep ? (
-        <PaywallStep onClose={() => setStep((s) => s + 1)} />
-      ) : isHomeStep ? (
-        <HomePlaceholder />
+        <PaywallStep onClose={() => navigate({ to: "/app/guarda-roupa" })} />
       ) : isSelfieStep ? (
         <SelfieStep onDone={finishSelfie} />
       ) : (
@@ -666,18 +660,6 @@ function PaywallStep({ onClose }: { onClose: () => void }) {
           </button>
         </div>
       </div>
-    </div>
-  );
-}
-
-function HomePlaceholder() {
-  // Placeholder simples para a Home do app (a ser construída no próximo passo).
-  return (
-    <div className="flex flex-1 flex-col items-center justify-center text-center">
-      <h1 className="font-display text-2xl font-extrabold text-foreground">Home</h1>
-      <p className="mt-3 text-sm text-muted-foreground">
-        A home do app (Guarda-roupa, Estilista etc.) será construída no próximo passo.
-      </p>
     </div>
   );
 }
