@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, Camera, Check, ChevronRight, Image, User, X } from "lucide-react";
+import lookFlatlay from "@/assets/look-flatlay.jpg";
+import paywallLifestyle from "@/assets/paywall-lifestyle.jpg";
 
 export const Route = createFileRoute("/onboarding")({
   head: () => ({
@@ -87,10 +89,18 @@ function OnboardingFlow() {
 
   const isSelfieStep = step === STEPS.length;
   const isProcessingStep = step === STEPS.length + 1;
-  const isPlaceholderStep = step === STEPS.length + 2;
+  const isRevealStep = step === STEPS.length + 2;
+  const isPaywallStep = step === STEPS.length + 3;
+  const isHomeStep = step === STEPS.length + 4;
   const showTopBar = step <= STEPS.length;
   const current =
-    isSelfieStep || isProcessingStep || isPlaceholderStep ? null : STEPS[step]!;
+    isSelfieStep ||
+    isProcessingStep ||
+    isRevealStep ||
+    isPaywallStep ||
+    isHomeStep
+      ? null
+      : STEPS[step]!;
   const progress = ((step + 1) / TOTAL_STEPS) * 100;
 
   function choose(option: string) {
@@ -133,8 +143,12 @@ function OnboardingFlow() {
 
       {isProcessingStep ? (
         <ProcessingStep onDone={() => setStep((s) => s + 1)} />
-      ) : isPlaceholderStep ? (
-        <PlaceholderStep />
+      ) : isRevealStep ? (
+        <RevealStep onContinue={() => setStep((s) => s + 1)} />
+      ) : isPaywallStep ? (
+        <PaywallStep onClose={() => setStep((s) => s + 1)} />
+      ) : isHomeStep ? (
+        <HomePlaceholder />
       ) : isSelfieStep ? (
         <SelfieStep onDone={finishSelfie} />
       ) : (
@@ -501,15 +515,168 @@ function TaskItem({ done, label }: { done: boolean; label: string }) {
   );
 }
 
-function PlaceholderStep() {
-  // Placeholder simples para a próxima etapa do onboarding (a ser construída).
+function RevealStep({ onContinue }: { onContinue: () => void }) {
+  const items = [
+    { emoji: "👜", label: "Bolsa" },
+    { emoji: "👕", label: "Blusa" },
+    { emoji: "👖", label: "Calça" },
+    { emoji: "🧢", label: "Boné" },
+  ];
+  return (
+    <div className="flex flex-1 flex-col">
+      <h1 className="mt-8 text-center font-display text-2xl font-extrabold leading-tight tracking-tight text-foreground">
+        Nossos usuários criam mais de 1.000 looks com o que já têm
+      </h1>
+
+      {/* Carrossel horizontal de miniaturas */}
+      <div className="mt-6 flex gap-3 overflow-x-auto pb-2">
+        {items.map((it) => (
+          <div key={it.label} className="flex w-20 shrink-0 flex-col items-center gap-2">
+            <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-card text-3xl">
+              {it.emoji}
+            </div>
+            <span className="text-xs text-muted-foreground">{it.label}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Card maior: combinação de look montada */}
+      <div className="mt-6 min-h-[220px] flex-1 overflow-hidden rounded-3xl">
+        <img
+          src={lookFlatlay}
+          alt="Look montado com seu guarda-roupa"
+          loading="lazy"
+          className="h-full w-full object-cover"
+        />
+      </div>
+
+      <button
+        type="button"
+        onClick={onContinue}
+        className="mt-6 flex min-h-[52px] w-full items-center justify-center rounded-full bg-primary text-base font-semibold text-primary-foreground"
+      >
+        Continuar
+      </button>
+    </div>
+  );
+}
+
+function PaywallStep({ onClose }: { onClose: () => void }) {
+  const [plan, setPlan] = useState<"semanal" | "mensal" | "anual">("anual");
+  const plans = [
+    { id: "semanal" as const, label: "Semanal", price: "R$ 39,90", period: "/semana", badge: null as string | null },
+    { id: "mensal" as const, label: "Mensal", price: "R$ 79,90", period: "/mês", badge: "Economize 6%" },
+    { id: "anual" as const, label: "Anual", price: "R$ 199,90", period: "/ano", badge: "Economize 58%" },
+  ];
+  const benefits = [
+    "Veja qualquer look no seu avatar",
+    "Encontre roupas a partir de qualquer foto",
+    "Crie looks com o seu guarda-roupa",
+    "Organize seu guarda-roupa",
+    "Descubra suas melhores cores",
+    "Transforme fotos de roupas em fotos de estúdio",
+  ];
+  return (
+    <div className="fixed inset-0 z-50 flex flex-col bg-background">
+      <div className="flex-1 overflow-y-auto">
+        {/* Imagem de fundo lifestyle + X */}
+        <div className="relative h-56 w-full overflow-hidden">
+          <img
+            src={paywallLifestyle}
+            alt=""
+            loading="lazy"
+            className="h-full w-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-foreground/20 to-transparent" />
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Fechar"
+            className="absolute left-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-foreground/40 text-white backdrop-blur"
+          >
+            <X size={20} />
+          </button>
+        </div>
+
+        <div className="px-6 pb-6">
+          <h1 className="mt-6 font-display text-2xl font-extrabold leading-tight tracking-tight text-foreground">
+            Desbloquear o Pro
+          </h1>
+
+          {/* Lista de benefícios */}
+          <div className="mt-5 flex flex-col gap-3">
+            {benefits.map((b) => (
+              <div key={b} className="flex items-center gap-3">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-success text-white">
+                  <Check size={14} strokeWidth={3} />
+                </span>
+                <span className="text-base text-foreground">{b}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Cards de plano */}
+          <div className="mt-6 grid grid-cols-3 gap-3">
+            {plans.map((pl) => {
+              const selected = plan === pl.id;
+              return (
+                <button
+                  key={pl.id}
+                  type="button"
+                  onClick={() => setPlan(pl.id)}
+                  className={`relative flex flex-col items-center rounded-2xl border p-3 text-center transition-colors ${
+                    selected ? "border-primary bg-primary/5" : "border-border bg-card"
+                  }`}
+                >
+                  {pl.badge && (
+                    <span className="absolute -top-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold text-primary-foreground">
+                      {pl.badge}
+                    </span>
+                  )}
+                  <span className="text-sm font-semibold text-foreground">{pl.label}</span>
+                  <span className="mt-1 text-base font-extrabold text-foreground">{pl.price}</span>
+                  <span className="text-xs text-muted-foreground">{pl.period}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Termos de renovação automática */}
+          <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
+            A assinatura renova automaticamente até ser cancelada. Cancele a qualquer momento nas configurações da conta.
+          </p>
+        </div>
+      </div>
+
+      {/* Rodapé: botão + links */}
+      <div className="border-t border-border bg-background px-6 pb-8 pt-4">
+        <button
+          type="button"
+          onClick={onClose}
+          className="flex min-h-[52px] w-full items-center justify-center rounded-full bg-foreground text-base font-semibold text-background"
+        >
+          Continuar
+        </button>
+        <div className="mt-3 flex justify-center gap-6">
+          <button type="button" className="text-xs text-muted-foreground underline underline-offset-4">
+            Restaurar compras
+          </button>
+          <button type="button" className="text-xs text-muted-foreground underline underline-offset-4">
+            Resgatar código
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function HomePlaceholder() {
+  // Placeholder simples para a Home do app (a ser construída no próximo passo).
   return (
     <div className="flex flex-1 flex-col items-center justify-center text-center">
-      <h1 className="font-display text-2xl font-extrabold text-foreground">
-        Quase lá!
-      </h1>
+      <h1 className="font-display text-2xl font-extrabold text-foreground">Home</h1>
       <p className="mt-3 text-sm text-muted-foreground">
-        A próxima etapa do onboarding será construída em breve.
+        A home do app (Guarda-roupa, Estilista etc.) será construída no próximo passo.
       </p>
     </div>
   );
