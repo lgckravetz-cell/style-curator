@@ -15,9 +15,11 @@ import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as AppIndexRouteImport } from './routes/app/index'
 import { Route as AppEstilistaRouteImport } from './routes/app/estilista'
 import { Route as AppGuardaRoupaRouteImport } from './routes/app/guarda-roupa'
+import { Route as AppHistoricoRouteImport } from './routes/app/historico'
 import { Route as AppInspoRouteImport } from './routes/app/inspo'
 import { Route as AppLooksRouteImport } from './routes/app/looks'
 import { Route as AppPerfilRouteImport } from './routes/app/perfil'
+import { Route as AppProvadorRouteImport } from './routes/app/provador'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -49,6 +51,11 @@ const AppGuardaRoupaRoute = AppGuardaRoupaRouteImport.update({
   path: '/guarda-roupa',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AppHistoricoRoute = AppHistoricoRouteImport.update({
+  id: '/historico',
+  path: '/historico',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const AppInspoRoute = AppInspoRouteImport.update({
   id: '/inspo',
   path: '/inspo',
@@ -64,6 +71,11 @@ const AppPerfilRoute = AppPerfilRouteImport.update({
   path: '/perfil',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AppProvadorRoute = AppProvadorRouteImport.update({
+  id: '/provador',
+  path: '/provador',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -71,9 +83,11 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof OnboardingRoute
   '/app/estilista': typeof AppEstilistaRoute
   '/app/guarda-roupa': typeof AppGuardaRoupaRoute
+  '/app/historico': typeof AppHistoricoRoute
   '/app/inspo': typeof AppInspoRoute
   '/app/looks': typeof AppLooksRoute
   '/app/perfil': typeof AppPerfilRoute
+  '/app/provador': typeof AppProvadorRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRoutesByTo {
@@ -81,9 +95,11 @@ export interface FileRoutesByTo {
   '/onboarding': typeof OnboardingRoute
   '/app/estilista': typeof AppEstilistaRoute
   '/app/guarda-roupa': typeof AppGuardaRoupaRoute
+  '/app/historico': typeof AppHistoricoRoute
   '/app/inspo': typeof AppInspoRoute
   '/app/looks': typeof AppLooksRoute
   '/app/perfil': typeof AppPerfilRoute
+  '/app/provador': typeof AppProvadorRoute
   '/app': typeof AppIndexRoute
 }
 export interface FileRoutesById {
@@ -93,9 +109,11 @@ export interface FileRoutesById {
   '/onboarding': typeof OnboardingRoute
   '/app/estilista': typeof AppEstilistaRoute
   '/app/guarda-roupa': typeof AppGuardaRoupaRoute
+  '/app/historico': typeof AppHistoricoRoute
   '/app/inspo': typeof AppInspoRoute
   '/app/looks': typeof AppLooksRoute
   '/app/perfil': typeof AppPerfilRoute
+  '/app/provador': typeof AppProvadorRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
@@ -106,9 +124,11 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/app/estilista'
     | '/app/guarda-roupa'
+    | '/app/historico'
     | '/app/inspo'
     | '/app/looks'
     | '/app/perfil'
+    | '/app/provador'
     | '/app/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -116,9 +136,11 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/app/estilista'
     | '/app/guarda-roupa'
+    | '/app/historico'
     | '/app/inspo'
     | '/app/looks'
     | '/app/perfil'
+    | '/app/provador'
     | '/app'
   id:
     | '__root__'
@@ -127,9 +149,11 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/app/estilista'
     | '/app/guarda-roupa'
+    | '/app/historico'
     | '/app/inspo'
     | '/app/looks'
     | '/app/perfil'
+    | '/app/provador'
     | '/app/'
   fileRoutesById: FileRoutesById
 }
@@ -183,6 +207,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppGuardaRoupaRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/app/historico': {
+      id: '/app/historico'
+      path: '/historico'
+      fullPath: '/app/historico'
+      preLoaderRoute: typeof AppHistoricoRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/app/inspo': {
       id: '/app/inspo'
       path: '/inspo'
@@ -204,24 +235,35 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPerfilRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/app/provador': {
+      id: '/app/provador'
+      path: '/provador'
+      fullPath: '/app/provador'
+      preLoaderRoute: typeof AppProvadorRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
   }
 }
 
 interface AppRouteRouteChildren {
   AppEstilistaRoute: typeof AppEstilistaRoute
   AppGuardaRoupaRoute: typeof AppGuardaRoupaRoute
+  AppHistoricoRoute: typeof AppHistoricoRoute
   AppInspoRoute: typeof AppInspoRoute
   AppLooksRoute: typeof AppLooksRoute
   AppPerfilRoute: typeof AppPerfilRoute
+  AppProvadorRoute: typeof AppProvadorRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppEstilistaRoute: AppEstilistaRoute,
   AppGuardaRoupaRoute: AppGuardaRoupaRoute,
+  AppHistoricoRoute: AppHistoricoRoute,
   AppInspoRoute: AppInspoRoute,
   AppLooksRoute: AppLooksRoute,
   AppPerfilRoute: AppPerfilRoute,
+  AppProvadorRoute: AppProvadorRoute,
   AppIndexRoute: AppIndexRoute,
 }
 
