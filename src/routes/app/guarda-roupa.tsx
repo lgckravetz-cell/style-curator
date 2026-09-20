@@ -2,6 +2,11 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { Camera, Image, Loader2, Plus, Shirt, X } from "lucide-react";
 import { toast } from "sonner";
+import {
+  addWardrobePiece,
+  markWardrobeProcessed,
+  useWardrobePieces,
+} from "@/lib/wardrobe";
 
 export const Route = createFileRoute("/app/guarda-roupa")({
   head: () => ({
@@ -25,14 +30,8 @@ export const Route = createFileRoute("/app/guarda-roupa")({
   component: WardrobeScreen,
 });
 
-interface Piece {
-  id: string;
-  src: string;
-  processing: boolean;
-}
-
 function WardrobeScreen() {
-  const [pieces, setPieces] = useState<Piece[]>([]);
+  const pieces = useWardrobePieces();
   const [showSourceModal, setShowSourceModal] = useState(false);
   const galleryInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
@@ -41,18 +40,10 @@ function WardrobeScreen() {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = () => {
-      const id = crypto.randomUUID();
       // A peça aparece imediatamente com spinner de "processando" (simulação
       // da classificação automática por IA, que será integrada depois).
-      setPieces((prev) => [
-        ...prev,
-        { id, src: reader.result as string, processing: true },
-      ]);
-      setTimeout(() => {
-        setPieces((prev) =>
-          prev.map((p) => (p.id === id ? { ...p, processing: false } : p)),
-        );
-      }, 1500);
+      const id = addWardrobePiece(reader.result as string);
+      setTimeout(() => markWardrobeProcessed(id), 1500);
     };
     reader.readAsDataURL(file);
   }
