@@ -9,7 +9,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
-import { PAYWALL_STEP } from "@/routes/onboarding";
+const PAYWALL_STEP = 7;
 
 export const Route = createFileRoute("/app/perfil")({
   head: () => ({

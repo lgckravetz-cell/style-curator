@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteRouteImport } from './routes/app/route'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as AppIndexRouteImport } from './routes/app/index'
+import { Route as AppConfiguracoesRouteImport } from './routes/app/configuracoes'
 import { Route as AppEstilistaRouteImport } from './routes/app/estilista'
 import { Route as AppGuardaRoupaRouteImport } from './routes/app/guarda-roupa'
 import { Route as AppHistoricoRouteImport } from './routes/app/historico'
@@ -39,6 +40,11 @@ const OnboardingRoute = OnboardingRouteImport.update({
 const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppConfiguracoesRoute = AppConfiguracoesRouteImport.update({
+  id: '/configuracoes',
+  path: '/configuracoes',
   getParentRoute: () => AppRouteRoute,
 } as any)
 const AppEstilistaRoute = AppEstilistaRouteImport.update({
@@ -81,6 +87,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteRouteWithChildren
   '/onboarding': typeof OnboardingRoute
+  '/app/configuracoes': typeof AppConfiguracoesRoute
   '/app/estilista': typeof AppEstilistaRoute
   '/app/guarda-roupa': typeof AppGuardaRoupaRoute
   '/app/historico': typeof AppHistoricoRoute
@@ -93,6 +100,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/onboarding': typeof OnboardingRoute
+  '/app/configuracoes': typeof AppConfiguracoesRoute
   '/app/estilista': typeof AppEstilistaRoute
   '/app/guarda-roupa': typeof AppGuardaRoupaRoute
   '/app/historico': typeof AppHistoricoRoute
@@ -107,6 +115,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/app': typeof AppRouteRouteWithChildren
   '/onboarding': typeof OnboardingRoute
+  '/app/configuracoes': typeof AppConfiguracoesRoute
   '/app/estilista': typeof AppEstilistaRoute
   '/app/guarda-roupa': typeof AppGuardaRoupaRoute
   '/app/historico': typeof AppHistoricoRoute
@@ -122,6 +131,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/onboarding'
+    | '/app/configuracoes'
     | '/app/estilista'
     | '/app/guarda-roupa'
     | '/app/historico'
@@ -134,6 +144,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/onboarding'
+    | '/app/configuracoes'
     | '/app/estilista'
     | '/app/guarda-roupa'
     | '/app/historico'
@@ -147,6 +158,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/onboarding'
+    | '/app/configuracoes'
     | '/app/estilista'
     | '/app/guarda-roupa'
     | '/app/historico'
@@ -191,6 +203,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/app/'
       preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/app/configuracoes': {
+      id: '/app/configuracoes'
+      path: '/configuracoes'
+      fullPath: '/app/configuracoes'
+      preLoaderRoute: typeof AppConfiguracoesRouteImport
       parentRoute: typeof AppRouteRoute
     }
     '/app/estilista': {
@@ -246,6 +265,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppRouteRouteChildren {
+  AppConfiguracoesRoute: typeof AppConfiguracoesRoute
   AppEstilistaRoute: typeof AppEstilistaRoute
   AppGuardaRoupaRoute: typeof AppGuardaRoupaRoute
   AppHistoricoRoute: typeof AppHistoricoRoute
@@ -257,6 +277,7 @@ interface AppRouteRouteChildren {
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
+  AppConfiguracoesRoute: AppConfiguracoesRoute,
   AppEstilistaRoute: AppEstilistaRoute,
   AppGuardaRoupaRoute: AppGuardaRoupaRoute,
   AppHistoricoRoute: AppHistoricoRoute,
