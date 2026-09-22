@@ -17,7 +17,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { captureDevelopmentTestError } from "@/lib/sentry-browser";
-import { LEGAL_URL } from "@/lib/legal";
+import { PRIVACY_PATH, TERMS_PATH } from "@/lib/legal";
 import { deleteAccount } from "@/lib/account.functions";
 import {
   AlertDialog,
