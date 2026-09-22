@@ -2,7 +2,6 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useCallback, useEffect, useState } from "react";
 import { ArrowLeft, History, RotateCcw, User } from "lucide-react";
-import { useWardrobePieces } from "@/lib/wardrobe";
 import { refreshTryOnHistory } from "@/lib/tryon-history";
 import { runTryOn } from "@/lib/tryon.functions";
 
@@ -51,8 +50,6 @@ const LIMIT_ERROR = "Limite diário de provas atingido";
 function TryOnScreen() {
   const navigate = useNavigate();
   const { peca } = Route.useSearch();
-  const pieces = useWardrobePieces();
-  const piece = pieces.find((p) => p.id === peca) ?? null;
   const tryOn = useServerFn(runTryOn);
 
   const [status, setStatus] = useState<Status>("loading");
@@ -163,7 +160,6 @@ function TryOnScreen() {
           </button>
         </div>
       )}
-      {piece === null && status === "loading" && null}
     </main>
   );
 }
