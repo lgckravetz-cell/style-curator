@@ -74,6 +74,33 @@ export type Database = {
         }
         Relationships: []
       }
+      stylist_messages: {
+        Row: {
+          content: string
+          created_at: string
+          has_image: boolean
+          id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          content?: string
+          created_at?: string
+          has_image?: boolean
+          id?: string
+          role?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          has_image?: boolean
+          id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       tryon_history: {
         Row: {
           created_at: string
