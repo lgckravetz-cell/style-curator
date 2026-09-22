@@ -695,7 +695,7 @@ function PaywallStep({ onClose }: { onClose: () => void }) {
       </div>
 
       {/* Rodapé: botão + links */}
-      <div className="border-t border-border bg-background px-6 pb-8 pt-4">
+      <div className="relative border-t border-border bg-background px-6 pb-8 pt-4">
         <button
           type="button"
           onClick={onClose}
