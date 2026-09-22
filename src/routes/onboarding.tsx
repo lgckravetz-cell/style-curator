@@ -4,6 +4,7 @@ import { ArrowLeft, Camera, Check, ChevronRight, Icon, Image, Shirt, ShoppingBag
 import { hatBaseball, trousers } from "@lucide/lab";
 import lookFlatlay from "@/assets/look-flatlay.jpg";
 import paywallLifestyle from "@/assets/paywall-lifestyle.jpg";
+import linenTexture from "@/assets/linen-texture.png";
 
 export const Route = createFileRoute("/onboarding")({
   head: () => ({
@@ -546,7 +547,18 @@ function RevealStep({ onContinue }: { onContinue: () => void }) {
     { icon: <Icon iconNode={hatBaseball} size={28} strokeWidth={1.5} />, label: "Boné" },
   ];
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="relative flex flex-1 flex-col">
+      {/* Textura de tecido sutil ao fundo */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-[0.18] mix-blend-multiply"
+        style={{
+          backgroundImage: `url(${linenTexture})`,
+          backgroundSize: "560px",
+          backgroundRepeat: "repeat",
+        }}
+      />
+      <div className="relative">
       <h1 className="mt-8 text-center font-display text-2xl font-extrabold leading-tight tracking-tight text-foreground">
         Nossos usuários criam mais de 1.000 looks com o que já têm
       </h1>
@@ -580,6 +592,7 @@ function RevealStep({ onContinue }: { onContinue: () => void }) {
       >
         Continuar
       </button>
+      </div>
     </div>
   );
 }
@@ -601,7 +614,17 @@ function PaywallStep({ onClose }: { onClose: () => void }) {
   ];
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-background">
-      <div className="flex-1 overflow-y-auto">
+      {/* Textura de tecido sutil ao fundo */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-[0.16] mix-blend-multiply"
+        style={{
+          backgroundImage: `url(${linenTexture})`,
+          backgroundSize: "560px",
+          backgroundRepeat: "repeat",
+        }}
+      />
+      <div className="relative flex-1 overflow-y-auto">
         {/* Imagem de fundo lifestyle + X */}
         <div className="relative h-56 w-full overflow-hidden">
           <img
@@ -672,7 +695,7 @@ function PaywallStep({ onClose }: { onClose: () => void }) {
       </div>
 
       {/* Rodapé: botão + links */}
-      <div className="border-t border-border bg-background px-6 pb-8 pt-4">
+      <div className="relative border-t border-border bg-background px-6 pb-8 pt-4">
         <button
           type="button"
           onClick={onClose}
