@@ -86,7 +86,8 @@ function SettingsScreen() {
   const [deleting, setDeleting] = useState(false);
   const runDeleteAccount = useServerFn(deleteAccount);
 
-  const openLegal = () => window.open(LEGAL_URL, "_blank", "noopener,noreferrer");
+  const openPrivacy = () => navigate({ to: PRIVACY_PATH });
+  const openTerms = () => navigate({ to: TERMS_PATH });
 
   async function confirmDelete() {
     setDeleting(true);
