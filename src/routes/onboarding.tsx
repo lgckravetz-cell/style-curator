@@ -108,9 +108,14 @@ function OnboardingFlow() {
   function choose(option: string) {
     if (!current || processing) return;
     setProcessing(true);
+    // Marca a opção selecionada imediatamente (destaque visual).
     setAnswers({ ...answers, [current.key]: option });
-    setStep((s) => s + 1);
-    setProcessing(false);
+    // Aguarda 200ms com a opção destacada antes de avançar,
+    // bloqueando novos cliques meanwhile (processing === true).
+    window.setTimeout(() => {
+      setStep((s) => s + 1);
+      setProcessing(false);
+    }, 200);
   }
 
   function finishSelfie(value: string) {
