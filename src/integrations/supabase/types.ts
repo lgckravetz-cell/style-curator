@@ -14,7 +14,137 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      outfits: {
+        Row: {
+          created_at: string
+          id: string
+          item_ids: string[]
+          ocasiao: string | null
+          score: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          item_ids?: string[]
+          ocasiao?: string | null
+          score?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          item_ids?: string[]
+          ocasiao?: string | null
+          score?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          coloracao_pessoal: string | null
+          created_at: string
+          estilo: string | null
+          id: string
+          updated_at: string
+          username: string | null
+        }
+        Insert: {
+          coloracao_pessoal?: string | null
+          created_at?: string
+          estilo?: string | null
+          id: string
+          updated_at?: string
+          username?: string | null
+        }
+        Update: {
+          coloracao_pessoal?: string | null
+          created_at?: string
+          estilo?: string | null
+          id?: string
+          updated_at?: string
+          username?: string | null
+        }
+        Relationships: []
+      }
+      tryon_history: {
+        Row: {
+          created_at: string
+          id: string
+          result_image_url: string
+          status: string
+          user_id: string
+          wardrobe_item_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          result_image_url: string
+          status?: string
+          user_id: string
+          wardrobe_item_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          result_image_url?: string
+          status?: string
+          user_id?: string
+          wardrobe_item_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tryon_history_wardrobe_item_id_fkey"
+            columns: ["wardrobe_item_id"]
+            isOneToOne: false
+            referencedRelation: "wardrobe_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      wardrobe_items: {
+        Row: {
+          categoria: string
+          confianca: number | null
+          cor: string | null
+          created_at: string
+          id: string
+          image_url: string
+          material: string | null
+          subcategoria: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          categoria?: string
+          confianca?: number | null
+          cor?: string | null
+          created_at?: string
+          id?: string
+          image_url: string
+          material?: string | null
+          subcategoria?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          categoria?: string
+          confianca?: number | null
+          cor?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string
+          material?: string | null
+          subcategoria?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
