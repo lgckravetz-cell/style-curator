@@ -5,9 +5,9 @@ import { ComingSoon } from "./inspo";
 export const Route = createFileRoute("/app/looks")({
   head: () => ({
     meta: [
-      { title: "Looks — Veste" },
+      { title: "Looks — Sartoria" },
       { name: "description", content: "Looks criados com o seu guarda-roupa." },
-      { property: "og:title", content: "Looks — Veste" },
+      { property: "og:title", content: "Looks — Sartoria" },
       { property: "og:description", content: "Looks criados com o seu guarda-roupa." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

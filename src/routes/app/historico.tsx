@@ -5,12 +5,12 @@ import { useTryOnHistory } from "@/lib/tryon-history";
 export const Route = createFileRoute("/app/historico")({
   head: () => ({
     meta: [
-      { title: "Histórico de provas — Veste" },
+      { title: "Histórico de provas — Sartoria" },
       {
         name: "description",
         content: "Todas as provas que você salvou no Provador Virtual.",
       },
-      { property: "og:title", content: "Histórico de provas — Veste" },
+      { property: "og:title", content: "Histórico de provas — Sartoria" },
       {
         property: "og:description",
         content: "Todas as provas que você salvou no Provador Virtual.",

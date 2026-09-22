@@ -11,12 +11,12 @@ export const Route = createFileRoute("/app/provador")({
   }),
   head: () => ({
     meta: [
-      { title: "Provador Virtual — Veste" },
+      { title: "Provador Virtual — Sartoria" },
       {
         name: "description",
         content: "Veja como as peças do seu guarda-roupa ficam em você.",
       },
-      { property: "og:title", content: "Provador Virtual — Veste" },
+      { property: "og:title", content: "Provador Virtual — Sartoria" },
       {
         property: "og:description",
         content: "Veja como as peças do seu guarda-roupa ficam em você.",
