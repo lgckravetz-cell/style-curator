@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useRef, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { Camera, Image as ImageIcon, Paperclip, Send, Shirt, X } from "lucide-react";
 import {
   Conversation,
@@ -18,7 +19,7 @@ import {
   type PromptInputMessage,
 } from "@/components/ai-elements/prompt-input";
 import { Shimmer } from "@/components/ai-elements/shimmer";
-import { useWardrobePieces } from "@/lib/wardrobe";
+import { askStylist } from "@/lib/stylist.functions";
 
 export const Route = createFileRoute("/app/estilista")({
   head: () => ({
@@ -139,33 +140,6 @@ function StylistScreen() {
                     alt="Look enviado"
                     className="max-h-56 w-auto rounded-2xl object-cover"
                   />
-                ) : msg.kind === "products" ? (
-                  <div className="flex flex-col gap-3">
-                    <p className="text-sm text-foreground">
-                      Encontrei estas peças parecidas:
-                    </p>
-                    <div className="flex gap-3 overflow-x-auto pb-1">
-                      {SAMPLE_PRODUCTS.map((p) => (
-                        <div
-                          key={p.name}
-                          className="w-32 shrink-0 overflow-hidden rounded-2xl border border-border bg-card"
-                        >
-                          <div className="flex h-24 items-center justify-center bg-muted text-4xl">
-                            {p.emoji}
-                          </div>
-                          <div className="p-3">
-                            <p className="text-xs font-semibold text-foreground">
-                              {p.name}
-                            </p>
-                            <p className="text-xs text-muted-foreground">{p.store}</p>
-                            <p className="mt-1 text-xs font-bold text-foreground">
-                              {p.price}
-                            </p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
                 ) : (
                   <div className="flex flex-col gap-3">
                     <p className="text-sm text-foreground">
