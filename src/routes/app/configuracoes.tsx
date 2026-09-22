@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { ClientOnly, createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import {
   ArrowLeft,
   Calendar,
@@ -185,16 +185,18 @@ function SettingsScreen() {
         />
       </div>
 
-      {import.meta.env.DEV ? (
-        <Button
-          type="button"
-          variant="ghost"
-          onClick={() => void captureDevelopmentTestError()}
-          className="mt-4 self-center text-xs text-muted-foreground"
-        >
-          Testar Sentry
-        </Button>
-      ) : null}
+      <ClientOnly>
+        {import.meta.env.DEV ? (
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => void captureDevelopmentTestError()}
+            className="mt-4 self-center text-xs text-muted-foreground"
+          >
+            Testar Sentry
+          </Button>
+        ) : null}
+      </ClientOnly>
     </main>
   );
 }
