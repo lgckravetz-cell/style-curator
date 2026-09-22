@@ -90,7 +90,7 @@ function TryOnScreen() {
           type="button"
           onClick={() => navigate({ to: "/app/guarda-roupa" })}
           aria-label="Voltar"
-          className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-card text-foreground"
+          className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-card text-foreground active:scale-[0.98] transition-transform duration-150"
         >
           <ArrowLeft size={20} />
         </button>
@@ -122,7 +122,7 @@ function TryOnScreen() {
               <button
                 type="button"
                 onClick={() => setAttempt((n) => n + 1)}
-                className="flex min-h-[52px] items-center justify-center gap-2 rounded-full bg-primary px-8 text-base font-semibold text-primary-foreground"
+                className="flex min-h-[52px] items-center justify-center gap-2 rounded-full bg-primary px-8 text-base font-semibold text-primary-foreground active:scale-[0.98] transition-transform duration-150"
               >
                 <RotateCcw size={18} />
                 Tentar novamente
@@ -154,7 +154,7 @@ function TryOnScreen() {
           <button
             type="button"
             onClick={() => navigate({ to: "/app/guarda-roupa" })}
-            className="flex min-h-[52px] w-full items-center justify-center rounded-full border border-border bg-card text-base font-semibold text-foreground"
+            className="flex min-h-[52px] w-full items-center justify-center rounded-full border border-border bg-card text-base font-semibold text-foreground active:scale-[0.98] transition-transform duration-150"
           >
             Provar outra peça
           </button>

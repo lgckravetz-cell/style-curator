@@ -132,7 +132,7 @@ function OnboardingFlow() {
             onClick={goBack}
             disabled={step === 0}
             aria-label="Voltar"
-            className="cursor-pointer flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-border bg-card text-foreground transition-opacity disabled:opacity-30"
+            className="cursor-pointer flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-border bg-card text-foreground transition-opacity disabled:opacity-30 active:scale-[0.98] transition-transform duration-150"
           >
             <ArrowLeft size={20} />
           </button>
@@ -174,7 +174,7 @@ function OnboardingFlow() {
                       selected
                         ? "border-primary bg-primary text-primary-foreground"
                         : "border-border bg-card text-foreground"
-                    } ${processing ? "pointer-events-none opacity-60" : ""}`}
+                    } ${processing ? "pointer-events-none opacity-60" : ""} active:scale-[0.98] transition-transform duration-150`}
                   >
                     {option}
                     <ChevronRight
@@ -200,7 +200,7 @@ function OnboardingFlow() {
             setAnswers({});
             setStep(0);
           }}
-          className="mx-auto mt-4 cursor-pointer text-xs text-muted-foreground underline underline-offset-4"
+          className="mx-auto mt-4 cursor-pointer text-xs text-muted-foreground underline underline-offset-4 active:scale-[0.98] transition-transform duration-150"
         >
           Recomeçar onboarding
         </button>
@@ -233,7 +233,7 @@ function SelfieStep({ onDone }: { onDone: (value: string) => void }) {
         <button
           type="button"
           onClick={() => setShowSkipModal(true)}
-          className="cursor-pointer mt-1 shrink-0 text-sm font-medium text-muted-foreground underline underline-offset-4"
+          className="cursor-pointer mt-1 shrink-0 text-sm font-medium text-muted-foreground underline underline-offset-4 active:scale-[0.98] transition-transform duration-150"
         >
           Pular
         </button>
@@ -278,14 +278,14 @@ function SelfieStep({ onDone }: { onDone: (value: string) => void }) {
             <button
               type="button"
               onClick={() => onDone(photo)}
-              className="cursor-pointer flex min-h-[52px] w-full items-center justify-center rounded-full bg-primary text-base font-semibold text-primary-foreground"
+              className="cursor-pointer flex min-h-[52px] w-full items-center justify-center rounded-full bg-primary text-base font-semibold text-primary-foreground active:scale-[0.98] transition-transform duration-150"
             >
               Concluir
             </button>
             <button
               type="button"
               onClick={() => setShowSourceModal(true)}
-              className="cursor-pointer flex min-h-[52px] w-full items-center justify-center rounded-full border border-border bg-card text-base font-semibold text-foreground"
+              className="cursor-pointer flex min-h-[52px] w-full items-center justify-center rounded-full border border-border bg-card text-base font-semibold text-foreground active:scale-[0.98] transition-transform duration-150"
             >
               Trocar foto
             </button>
@@ -294,7 +294,7 @@ function SelfieStep({ onDone }: { onDone: (value: string) => void }) {
           <button
             type="button"
             onClick={() => setShowSourceModal(true)}
-            className="cursor-pointer flex min-h-[52px] w-full items-center justify-center rounded-full bg-primary text-base font-semibold text-primary-foreground"
+            className="cursor-pointer flex min-h-[52px] w-full items-center justify-center rounded-full bg-primary text-base font-semibold text-primary-foreground active:scale-[0.98] transition-transform duration-150"
           >
             Selecionar
           </button>
@@ -334,7 +334,7 @@ function SelfieStep({ onDone }: { onDone: (value: string) => void }) {
                 setShowSourceModal(false);
                 cameraInputRef.current?.click();
               }}
-              className="cursor-pointer flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full bg-primary text-base font-semibold text-primary-foreground"
+              className="cursor-pointer flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full bg-primary text-base font-semibold text-primary-foreground active:scale-[0.98] transition-transform duration-150"
             >
               <Camera size={20} />
               Câmera
@@ -345,7 +345,7 @@ function SelfieStep({ onDone }: { onDone: (value: string) => void }) {
                 setShowSourceModal(false);
                 galleryInputRef.current?.click();
               }}
-              className="cursor-pointer flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full border border-border bg-card text-base font-semibold text-foreground"
+              className="cursor-pointer flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full border border-border bg-card text-base font-semibold text-foreground active:scale-[0.98] transition-transform duration-150"
             >
               <Image size={20} />
               Fotos
@@ -353,7 +353,7 @@ function SelfieStep({ onDone }: { onDone: (value: string) => void }) {
             <button
               type="button"
               onClick={() => setShowSourceModal(false)}
-              className="cursor-pointer mt-1 text-sm font-medium text-muted-foreground"
+              className="cursor-pointer mt-1 text-sm font-medium text-muted-foreground active:scale-[0.98] transition-transform duration-150"
             >
               Cancelar
             </button>
@@ -382,14 +382,14 @@ function SelfieStep({ onDone }: { onDone: (value: string) => void }) {
                 setShowSkipModal(false);
                 setShowSourceModal(true);
               }}
-              className="cursor-pointer mt-6 flex min-h-[52px] w-full items-center justify-center rounded-full bg-primary text-base font-semibold text-primary-foreground"
+              className="cursor-pointer mt-6 flex min-h-[52px] w-full items-center justify-center rounded-full bg-primary text-base font-semibold text-primary-foreground active:scale-[0.98] transition-transform duration-150"
             >
               Tirar uma selfie
             </button>
             <button
               type="button"
               onClick={() => onDone("pulada")}
-              className="cursor-pointer mt-4 text-sm font-medium text-muted-foreground underline underline-offset-4"
+              className="cursor-pointer mt-4 text-sm font-medium text-muted-foreground underline underline-offset-4 active:scale-[0.98] transition-transform duration-150"
             >
               Pular mesmo assim
             </button>
@@ -423,7 +423,7 @@ function BottomSheet({
           type="button"
           onClick={onClose}
           aria-label="Fechar"
-          className="cursor-pointer absolute right-5 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-muted text-muted-foreground"
+          className="cursor-pointer absolute right-5 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-muted text-muted-foreground active:scale-[0.98] transition-transform duration-150"
         >
           <X size={16} />
         </button>
@@ -571,7 +571,7 @@ function RevealStep({ onContinue }: { onContinue: () => void }) {
       <button
         type="button"
         onClick={onContinue}
-        className="cursor-pointer mt-6 flex min-h-[52px] w-full items-center justify-center rounded-full bg-primary text-base font-semibold text-primary-foreground"
+        className="cursor-pointer mt-6 flex min-h-[52px] w-full items-center justify-center rounded-full bg-primary text-base font-semibold text-primary-foreground active:scale-[0.98] transition-transform duration-150"
       >
         Continuar
       </button>
@@ -610,7 +610,7 @@ function PaywallStep({ onClose }: { onClose: () => void }) {
             type="button"
             onClick={onClose}
             aria-label="Fechar"
-            className="cursor-pointer absolute left-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-foreground/40 text-white backdrop-blur"
+            className="cursor-pointer absolute left-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-foreground/40 text-white backdrop-blur active:scale-[0.98] transition-transform duration-150"
           >
             <X size={20} />
           </button>
@@ -644,7 +644,7 @@ function PaywallStep({ onClose }: { onClose: () => void }) {
                   onClick={() => setPlan(pl.id)}
                   className={`cursor-pointer relative flex flex-col items-center rounded-2xl border p-3 text-center transition-colors ${
                     selected ? "border-primary bg-primary/5" : "border-border bg-card"
-                  }`}
+                  } active:scale-[0.98] transition-transform duration-150`}
                 >
                   {pl.badge && (
                     <span className="absolute -top-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold text-primary-foreground">
@@ -671,15 +671,15 @@ function PaywallStep({ onClose }: { onClose: () => void }) {
         <button
           type="button"
           onClick={onClose}
-          className="cursor-pointer flex min-h-[52px] w-full items-center justify-center rounded-full bg-foreground text-base font-semibold text-background"
+          className="cursor-pointer flex min-h-[52px] w-full items-center justify-center rounded-full bg-foreground text-base font-semibold text-background active:scale-[0.98] transition-transform duration-150"
         >
           Continuar
         </button>
         <div className="mt-3 flex justify-center gap-6">
-          <button type="button" className="cursor-pointer text-xs text-muted-foreground underline underline-offset-4">
+          <button type="button" className="cursor-pointer text-xs text-muted-foreground underline underline-offset-4 active:scale-[0.98] transition-transform duration-150">
             Restaurar compras
           </button>
-          <button type="button" className="cursor-pointer text-xs text-muted-foreground underline underline-offset-4">
+          <button type="button" className="cursor-pointer text-xs text-muted-foreground underline underline-offset-4 active:scale-[0.98] transition-transform duration-150">
             Resgatar código
           </button>
         </div>

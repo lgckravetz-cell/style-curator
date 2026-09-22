@@ -60,7 +60,7 @@ function WardrobeScreen() {
       <button
         type="button"
         onClick={() => setShowSourceModal(true)}
-        className="mt-6 flex w-full items-center gap-4 rounded-3xl border border-border bg-card p-5 text-left"
+        className="mt-6 flex w-full items-center gap-4 rounded-3xl border border-border bg-card p-5 text-left active:scale-[0.98] transition-transform duration-150"
       >
         <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
           <Camera size={22} />
@@ -88,7 +88,7 @@ function WardrobeScreen() {
           <button
             type="button"
             onClick={() => setShowSourceModal(true)}
-            className="mt-6 flex min-h-[52px] items-center justify-center gap-2 rounded-full bg-primary px-8 text-base font-semibold text-primary-foreground"
+            className="mt-6 flex min-h-[52px] items-center justify-center gap-2 rounded-full bg-primary px-8 text-base font-semibold text-primary-foreground active:scale-[0.98] transition-transform duration-150"
           >
             <Plus size={20} />
             Adicionar peça
@@ -130,7 +130,7 @@ function WardrobeScreen() {
         type="button"
         onClick={simulateError}
         aria-label="Simular erro de upload"
-        className="fixed bottom-24 right-3 z-30 rounded-full bg-muted px-2 py-1 text-[10px] text-muted-foreground/50"
+        className="fixed bottom-24 right-3 z-30 rounded-full bg-muted px-2 py-1 text-[10px] text-muted-foreground/50 active:scale-[0.98] transition-transform duration-150"
       >
         Simular erro
       </button>
@@ -175,7 +175,7 @@ function WardrobeScreen() {
               type="button"
               onClick={() => setShowSourceModal(false)}
               aria-label="Fechar"
-              className="absolute right-5 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-muted text-muted-foreground"
+              className="absolute right-5 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-muted text-muted-foreground active:scale-[0.98] transition-transform duration-150"
             >
               <X size={16} />
             </button>
@@ -186,7 +186,7 @@ function WardrobeScreen() {
                   setShowSourceModal(false);
                   cameraInputRef.current?.click();
                 }}
-                className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full bg-primary text-base font-semibold text-primary-foreground"
+                className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full bg-primary text-base font-semibold text-primary-foreground active:scale-[0.98] transition-transform duration-150"
               >
                 <Camera size={20} />
                 Câmera
@@ -197,7 +197,7 @@ function WardrobeScreen() {
                   setShowSourceModal(false);
                   galleryInputRef.current?.click();
                 }}
-                className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full border border-border bg-card text-base font-semibold text-foreground"
+                className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full border border-border bg-card text-base font-semibold text-foreground active:scale-[0.98] transition-transform duration-150"
               >
                 <Image size={20} />
                 Fotos
@@ -205,7 +205,7 @@ function WardrobeScreen() {
               <button
                 type="button"
                 onClick={() => setShowSourceModal(false)}
-                className="mt-1 text-sm font-medium text-muted-foreground"
+                className="mt-1 text-sm font-medium text-muted-foreground active:scale-[0.98] transition-transform duration-150"
               >
                 Cancelar
               </button>
