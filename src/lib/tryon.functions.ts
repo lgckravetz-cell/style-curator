@@ -35,9 +35,13 @@ export const runTryOn = createServerFn({ method: "POST" })
     return input;
   })
   .handler(async ({ data, context }) => {
+    const requestId = newRequestId();
     const { supabase, userId } = context;
     const falKey = process.env["FAL_API_KEY"] ?? process.env["APIFALAI"];
-    if (!falKey) throw new Error("O provador virtual não está configurado.");
+    if (!falKey) {
+      console.error(`[try-on][${requestId}] FAL_API_KEY/APIFALAI ausente no ambiente do servidor`);
+      throw new Error("O provador virtual não está configurado.");
+    }
 
     // Rate limiting: só provas concluídas com sucesso contam para a cota.
     const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
