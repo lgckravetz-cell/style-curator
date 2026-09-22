@@ -88,6 +88,7 @@ function OnboardingFlow() {
   const { step: initialStep } = Route.useSearch();
   const [step, setStep] = useState(initialStep ?? 0);
   const [answers, setAnswers] = useState<Record<string, string>>(loadAnswers);
+  const [processing, setProcessing] = useState(false);
 
   useEffect(() => {
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify(answers));
@@ -105,9 +106,11 @@ function OnboardingFlow() {
   const progress = ((step + 1) / TOTAL_STEPS) * 100;
 
   function choose(option: string) {
-    if (!current) return;
+    if (!current || processing) return;
+    setProcessing(true);
     setAnswers({ ...answers, [current.key]: option });
-    setStep(step + 1);
+    setStep((s) => s + 1);
+    setProcessing(false);
   }
 
   function finishSelfie(value: string) {
@@ -165,12 +168,13 @@ function OnboardingFlow() {
                   <button
                     key={option}
                     type="button"
+                    disabled={processing}
                     onClick={() => choose(option)}
                     className={`flex min-h-[52px] w-full items-center justify-between rounded-full border px-6 text-left text-base font-medium transition-colors ${
                       selected
                         ? "border-primary bg-primary text-primary-foreground"
                         : "border-border bg-card text-foreground"
-                    }`}
+                    } ${processing ? "pointer-events-none opacity-60" : ""}`}
                   >
                     {option}
                     <ChevronRight
