@@ -3,7 +3,7 @@ import type { CloudflareOptions } from "@sentry/cloudflare";
 
 type SafeErrorContext = {
   requestId: string;
-  area: "try-on" | "stylist-chat" | "server";
+  area: "try-on" | "stylist-chat" | "delete-account" | "server";
   userId?: string;
   operation?: string;
 };

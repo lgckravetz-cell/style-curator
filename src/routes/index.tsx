@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { lovable } from "@/integrations/lovable/index";
+import { LEGAL_URL } from "@/lib/legal";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -114,11 +115,21 @@ function LoginScreen() {
 
         <p className="mt-6 text-center text-xs leading-relaxed text-muted-foreground">
           Ao entrar, você concorda com nossos{" "}
-          <a href="/termos" className="underline underline-offset-2">
+          <a
+            href={LEGAL_URL}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="underline underline-offset-2"
+          >
             Termos
           </a>{" "}
           e{" "}
-          <a href="/privacidade" className="underline underline-offset-2">
+          <a
+            href={LEGAL_URL}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="underline underline-offset-2"
+          >
             Política de Privacidade
           </a>
           .

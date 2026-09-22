@@ -1,18 +1,34 @@
 import { ClientOnly, createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { useState } from "react";
 import {
   ArrowLeft,
   Calendar,
   ChevronRight,
   Coins,
+  FileText,
   Lock,
   Mail,
   MessageCircle,
   Share2,
+  ShieldCheck,
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { captureDevelopmentTestError } from "@/lib/sentry-browser";
+import { LEGAL_URL } from "@/lib/legal";
+import { deleteAccount } from "@/lib/account.functions";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 const PAYWALL_STEP = 7;
 
 export const Route = createFileRoute("/app/configuracoes")({
@@ -66,6 +82,26 @@ function Row({
 function SettingsScreen() {
   const navigate = useNavigate();
   const soon = () => toast("Em breve por aqui");
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const runDeleteAccount = useServerFn(deleteAccount);
+
+  const openLegal = () => window.open(LEGAL_URL, "_blank", "noopener,noreferrer");
+
+  async function confirmDelete() {
+    setDeleting(true);
+    try {
+      await runDeleteAccount();
+      await supabase.auth.signOut();
+      setConfirmOpen(false);
+      toast.success("Conta excluída.");
+      navigate({ to: "/" });
+    } catch {
+      toast.error("Não foi possível excluir a conta. Tente novamente.");
+    } finally {
+      setDeleting(false);
+    }
+  }
 
   async function signOut() {
     try {
@@ -156,6 +192,20 @@ function SettingsScreen() {
         />
       </div>
 
+      {/* Legal */}
+      <div className="mt-4 rounded-3xl border border-border bg-card px-5">
+        <Row
+          icon={<ShieldCheck size={18} className="text-muted-foreground" />}
+          label="Política de Privacidade"
+          onClick={openLegal}
+        />
+        <Row
+          icon={<FileText size={18} className="text-muted-foreground" />}
+          label="Termos de Uso"
+          onClick={openLegal}
+        />
+      </div>
+
       {/* Redes sociais */}
       <div className="mt-4 flex items-center justify-center gap-3">
         {["Instagram", "TikTok", "Discord"].map((network) => (
@@ -187,10 +237,38 @@ function SettingsScreen() {
         <Row
           label="Excluir conta"
           danger
-          onClick={soon}
+          onClick={() => setConfirmOpen(true)}
           trailing={<span />}
         />
       </div>
+
+      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <AlertDialogContent className="rounded-3xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="font-display">Excluir sua conta?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação é irreversível. Suas peças, looks, provas de roupa, conversas com o
+              estilista e sua conta de acesso serão apagados para sempre.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting} className="min-h-[52px] rounded-full">
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              disabled={deleting}
+              onClick={(event) => {
+                event.preventDefault();
+                void confirmDelete();
+              }}
+              className="min-h-[52px] rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleting ? "Excluindo…" : "Excluir conta"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
 
       <ClientOnly>
         {import.meta.env.DEV ? (
