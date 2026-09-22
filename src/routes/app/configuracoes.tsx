@@ -12,7 +12,7 @@ import {
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { captureDevelopmentTestError } from "@/lib/sentry.client";
+import { captureDevelopmentTestError } from "@/lib/sentry-browser";
 const PAYWALL_STEP = 7;
 
 export const Route = createFileRoute("/app/configuracoes")({
