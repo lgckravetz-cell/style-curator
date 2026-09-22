@@ -198,12 +198,12 @@ function SettingsScreen() {
         <Row
           icon={<ShieldCheck size={18} className="text-muted-foreground" />}
           label="Política de Privacidade"
-          onClick={openLegal}
+          onClick={openPrivacy}
         />
         <Row
           icon={<FileText size={18} className="text-muted-foreground" />}
           label="Termos de Uso"
-          onClick={openLegal}
+          onClick={openTerms}
         />
       </div>
 
