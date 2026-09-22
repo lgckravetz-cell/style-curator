@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, Camera, Check, ChevronRight, Image, User, X } from "lucide-react";
+import { ArrowLeft, Camera, Check, ChevronRight, Icon, Image, Shirt, ShoppingBag, User, X } from "lucide-react";
+import { hatBaseball, trousers } from "@lucide/lab";
 import lookFlatlay from "@/assets/look-flatlay.jpg";
 import paywallLifestyle from "@/assets/paywall-lifestyle.jpg";
 
@@ -70,8 +71,8 @@ const STEPS: Step[] = [
 const TOTAL_STEPS = STEPS.length + 1; // +1 = etapa da selfie
 
 const SELFIE_BENEFITS = [
-  "📷 Usamos sua selfie para criar seu avatar de prova",
-  "🖼️ É assim também que achamos seus looks na sua galeria",
+  { icon: Camera, text: "Usamos sua selfie para criar seu avatar de prova" },
+  { icon: Image, text: "É assim também que achamos seus looks na sua galeria" },
 ];
 
 function loadAnswers(): Record<string, string> {
@@ -223,9 +224,10 @@ function SelfieStep({ onDone }: { onDone: (value: string) => void }) {
 
       {/* Benefícios */}
       <div className="mt-5 flex flex-col gap-2">
-        {SELFIE_BENEFITS.map((line) => (
-          <p key={line} className="text-sm leading-relaxed text-muted-foreground">
-            {line}
+        {SELFIE_BENEFITS.map(({ icon: BenefitIcon, text }) => (
+          <p key={text} className="flex items-center gap-2 text-sm leading-relaxed text-muted-foreground">
+            <BenefitIcon size={16} strokeWidth={1.5} className="shrink-0" />
+            {text}
           </p>
         ))}
       </div>
@@ -350,9 +352,10 @@ function SelfieStep({ onDone }: { onDone: (value: string) => void }) {
               Antes de pular…
             </h2>
             <div className="mt-4 flex flex-col gap-2">
-              {SELFIE_BENEFITS.map((line) => (
-                <p key={line} className="text-sm leading-relaxed text-muted-foreground">
-                  {line}
+              {SELFIE_BENEFITS.map(({ icon: BenefitIcon, text }) => (
+                <p key={text} className="flex items-center gap-2 text-sm leading-relaxed text-muted-foreground">
+                  <BenefitIcon size={16} strokeWidth={1.5} className="shrink-0" />
+                  {text}
                 </p>
               ))}
             </div>
@@ -515,10 +518,10 @@ function TaskItem({ done, label }: { done: boolean; label: string }) {
 
 function RevealStep({ onContinue }: { onContinue: () => void }) {
   const items = [
-    { emoji: "👜", label: "Bolsa" },
-    { emoji: "👕", label: "Blusa" },
-    { emoji: "👖", label: "Calça" },
-    { emoji: "🧢", label: "Boné" },
+    { icon: <ShoppingBag size={28} strokeWidth={1.5} />, label: "Bolsa" },
+    { icon: <Shirt size={28} strokeWidth={1.5} />, label: "Blusa" },
+    { icon: <Icon iconNode={trousers} size={28} strokeWidth={1.5} />, label: "Calça" },
+    { icon: <Icon iconNode={hatBaseball} size={28} strokeWidth={1.5} />, label: "Boné" },
   ];
   return (
     <div className="flex flex-1 flex-col">
@@ -530,8 +533,8 @@ function RevealStep({ onContinue }: { onContinue: () => void }) {
       <div className="mt-6 flex gap-3 overflow-x-auto pb-2">
         {items.map((it) => (
           <div key={it.label} className="flex w-20 shrink-0 flex-col items-center gap-2">
-            <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-card text-3xl">
-              {it.emoji}
+            <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-card text-foreground">
+              {it.icon}
             </div>
             <span className="text-xs text-muted-foreground">{it.label}</span>
           </div>
