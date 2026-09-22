@@ -207,7 +207,7 @@ function StylistScreen() {
           </button>
           <PromptInputSubmit
             aria-label="Enviar mensagem"
-            status={typing ? "submitted" : undefined}
+            {...(typing ? { status: "submitted" as const } : {})}
             className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
           >
             <Send size={16} />
