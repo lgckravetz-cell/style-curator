@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteRouteImport } from './routes/app/route'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
+import { Route as TermosRouteImport } from './routes/termos'
 import { Route as AppIndexRouteImport } from './routes/app/index'
 import { Route as AppConfiguracoesRouteImport } from './routes/app/configuracoes'
 import { Route as AppEstilistaRouteImport } from './routes/app/estilista'
@@ -41,6 +42,11 @@ const OnboardingRoute = OnboardingRouteImport.update({
 const PrivacidadeRoute = PrivacidadeRouteImport.update({
   id: '/privacidade',
   path: '/privacidade',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermosRoute = TermosRouteImport.update({
+  id: '/termos',
+  path: '/termos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppIndexRoute = AppIndexRouteImport.update({
@@ -94,6 +100,7 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppRouteRouteWithChildren
   '/onboarding': typeof OnboardingRoute
   '/privacidade': typeof PrivacidadeRoute
+  '/termos': typeof TermosRoute
   '/app/configuracoes': typeof AppConfiguracoesRoute
   '/app/estilista': typeof AppEstilistaRoute
   '/app/guarda-roupa': typeof AppGuardaRoupaRoute
@@ -108,6 +115,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/onboarding': typeof OnboardingRoute
   '/privacidade': typeof PrivacidadeRoute
+  '/termos': typeof TermosRoute
   '/app/configuracoes': typeof AppConfiguracoesRoute
   '/app/estilista': typeof AppEstilistaRoute
   '/app/guarda-roupa': typeof AppGuardaRoupaRoute
@@ -124,6 +132,7 @@ export interface FileRoutesById {
   '/app': typeof AppRouteRouteWithChildren
   '/onboarding': typeof OnboardingRoute
   '/privacidade': typeof PrivacidadeRoute
+  '/termos': typeof TermosRoute
   '/app/configuracoes': typeof AppConfiguracoesRoute
   '/app/estilista': typeof AppEstilistaRoute
   '/app/guarda-roupa': typeof AppGuardaRoupaRoute
@@ -141,6 +150,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/onboarding'
     | '/privacidade'
+    | '/termos'
     | '/app/configuracoes'
     | '/app/estilista'
     | '/app/guarda-roupa'
@@ -155,6 +165,7 @@ export interface FileRouteTypes {
     | '/'
     | '/onboarding'
     | '/privacidade'
+    | '/termos'
     | '/app/configuracoes'
     | '/app/estilista'
     | '/app/guarda-roupa'
@@ -170,6 +181,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/onboarding'
     | '/privacidade'
+    | '/termos'
     | '/app/configuracoes'
     | '/app/estilista'
     | '/app/guarda-roupa'
@@ -186,6 +198,7 @@ export interface RootRouteChildren {
   AppRouteRoute: typeof AppRouteRouteWithChildren
   OnboardingRoute: typeof OnboardingRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
+  TermosRoute: typeof TermosRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -216,6 +229,13 @@ declare module '@tanstack/react-router' {
       path: '/privacidade'
       fullPath: '/privacidade'
       preLoaderRoute: typeof PrivacidadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/termos': {
+      id: '/termos'
+      path: '/termos'
+      fullPath: '/termos'
+      preLoaderRoute: typeof TermosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app/': {
@@ -317,6 +337,7 @@ const rootRouteChildren: RootRouteChildren = {
   AppRouteRoute: AppRouteRouteWithChildren,
   OnboardingRoute: OnboardingRoute,
   PrivacidadeRoute: PrivacidadeRoute,
+  TermosRoute: TermosRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
