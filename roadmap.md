@@ -1,6 +1,7 @@
 # Roadmap
 
 ## Concluído
+- [x] Sentry em produção — erros e logs com Request ID, usuário e filtros de privacidade
 - [x] Tela Estilista (chat) — mensagens simuladas, cards de produto, guarda-roupa vazio
 - [x] Provador Virtual — loading skeleton, resultado, salvar no histórico, erro com retry
 - [x] Histórico de provas — grade 2 colunas, link no Perfil

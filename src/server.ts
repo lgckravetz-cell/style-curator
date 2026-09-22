@@ -3,6 +3,9 @@ import "./lib/error-capture";
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
 import { checkRequiredEnvOnce } from "./lib/env-check.server";
+import { captureServerError, sentryServerOptions } from "./lib/sentry.server";
+import { newRequestId } from "./lib/request-id";
+import { withSentry } from "@sentry/cloudflare";
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -45,8 +48,9 @@ function isH3SwallowedErrorBody(body: string): boolean {
   }
 }
 
-export default {
+const serverHandler = {
   async fetch(request: Request, env: unknown, ctx: unknown) {
+    const requestId = newRequestId();
     try {
       checkRequiredEnvOnce();
       const handler = await getServerEntry();
@@ -54,6 +58,7 @@ export default {
       return await normalizeCatastrophicSsrResponse(response);
     } catch (error) {
       console.error(error);
+      captureServerError(error, { requestId, area: "server", operation: "unhandled-request" });
       return new Response(renderErrorPage(), {
         status: 500,
         headers: { "content-type": "text/html; charset=utf-8" },
@@ -61,3 +66,5 @@ export default {
     }
   },
 };
+
+export default withSentry(() => sentryServerOptions(), serverHandler);

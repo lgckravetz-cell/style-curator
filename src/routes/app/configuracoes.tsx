@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { ClientOnly, createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import {
   ArrowLeft,
   Calendar,
@@ -11,6 +11,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { captureDevelopmentTestError } from "@/lib/sentry-browser";
 const PAYWALL_STEP = 7;
 
 export const Route = createFileRoute("/app/configuracoes")({
@@ -182,6 +184,19 @@ function SettingsScreen() {
           trailing={<span />}
         />
       </div>
+
+      <ClientOnly>
+        {import.meta.env.DEV ? (
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => void captureDevelopmentTestError()}
+            className="mt-4 self-center text-xs text-muted-foreground"
+          >
+            Testar Sentry
+          </Button>
+        ) : null}
+      </ClientOnly>
     </main>
   );
 }

@@ -9,6 +9,7 @@ const REQUIRED: RequiredVar[] = [
   { label: "SUPABASE_SERVICE_ROLE_KEY", names: ["SUPABASE_SERVICE_ROLE_KEY"] },
   { label: "FAL_API_KEY ou APIFALAI", names: ["FAL_API_KEY", "APIFALAI"] },
   { label: "ANTHROPIC_API_KEY", names: ["ANTHROPIC_API_KEY"] },
+  { label: "SENTRY_DSN", names: ["SENTRY_DSN"] },
 ];
 
 let checked = false;

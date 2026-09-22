@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { newRequestId } from "@/lib/request-id";
+import { captureServerError } from "@/lib/sentry.server";
 
 // Estilista real: conversa com a Anthropic (Claude), com limite de 30 mensagens
 // por usuário a cada 24h e acesso às peças reais do guarda-roupa.
@@ -52,6 +53,12 @@ export const askStylist = createServerFn({ method: "POST" })
     const apiKey = process.env["ANTHROPIC_API_KEY"];
     if (!apiKey) {
       console.error(`[stylist-chat][${requestId}] ANTHROPIC_API_KEY ausente no ambiente do servidor`);
+      captureServerError(new Error("Configuração Anthropic ausente"), {
+        requestId,
+        area: "stylist-chat",
+        userId,
+        operation: "configuration",
+      });
       throw new Error("O estilista ainda não está configurado. Salve a chave da Anthropic para ativá-lo.");
     }
 
@@ -156,8 +163,15 @@ export const askStylist = createServerFn({ method: "POST" })
     });
 
     if (!response.ok) {
-      const detail = await response.text();
-      console.error(`[stylist-chat][${requestId}] Anthropic falhou`, response.status, detail);
+      await response.text();
+      const providerError = new Error(`Anthropic falhou com status ${response.status}`);
+      console.error(`[stylist-chat][${requestId}] Anthropic falhou`, response.status);
+      captureServerError(providerError, {
+        requestId,
+        area: "stylist-chat",
+        userId,
+        operation: "anthropic-request",
+      });
       throw new Error("Não conseguimos falar com o estilista agora. Tente novamente.");
     }
 
@@ -172,6 +186,12 @@ export const askStylist = createServerFn({ method: "POST" })
 
     if (!reply) {
       console.error(`[stylist-chat][${requestId}] resposta da Anthropic sem texto utilizável`);
+      captureServerError(new Error("Resposta Anthropic sem texto"), {
+        requestId,
+        area: "stylist-chat",
+        userId,
+        operation: "anthropic-response",
+      });
       throw new Error("Não conseguimos falar com o estilista agora. Tente novamente.");
     }
 
