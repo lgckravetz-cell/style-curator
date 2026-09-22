@@ -88,6 +88,7 @@ function OnboardingFlow() {
   const { step: initialStep } = Route.useSearch();
   const [step, setStep] = useState(initialStep ?? 0);
   const [answers, setAnswers] = useState<Record<string, string>>(loadAnswers);
+  const [processing, setProcessing] = useState(false);
 
   useEffect(() => {
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify(answers));
