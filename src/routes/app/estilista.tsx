@@ -24,9 +24,9 @@ import { askStylist } from "@/lib/stylist.functions";
 export const Route = createFileRoute("/app/estilista")({
   head: () => ({
     meta: [
-      { title: "Estilista — Sartoria" },
+      { title: "Estilista — Cabidy" },
       { name: "description", content: "Seu estilista pessoal com IA." },
-      { property: "og:title", content: "Estilista — Sartoria" },
+      { property: "og:title", content: "Estilista — Cabidy" },
       { property: "og:description", content: "Seu estilista pessoal com IA." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

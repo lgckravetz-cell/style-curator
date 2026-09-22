@@ -8,17 +8,17 @@ import paywallLifestyle from "@/assets/paywall-lifestyle.jpg";
 export const Route = createFileRoute("/onboarding")({
   head: () => ({
     meta: [
-      { title: "Onboarding — Sartoria" },
+      { title: "Onboarding — Cabidy" },
       {
         name: "description",
         content:
-          "Conte um pouco sobre você para personalizarmos sua experiência de estilo na Sartoria.",
+          "Conte um pouco sobre você para personalizarmos sua experiência de estilo na Cabidy.",
       },
-      { property: "og:title", content: "Onboarding — Sartoria" },
+      { property: "og:title", content: "Onboarding — Cabidy" },
       {
         property: "og:description",
         content:
-          "Conte um pouco sobre você para personalizarmos sua experiência de estilo na Sartoria.",
+          "Conte um pouco sobre você para personalizarmos sua experiência de estilo na Cabidy.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -30,7 +30,7 @@ export const Route = createFileRoute("/onboarding")({
   component: OnboardingFlow,
 });
 
-const STORAGE_KEY = "sartoria_onboarding_answers";
+const STORAGE_KEY = "cabidy_onboarding_answers";
 
 interface Step {
   key: string;
