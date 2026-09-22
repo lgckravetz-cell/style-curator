@@ -1,9 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { useCallback, useEffect, useState } from "react";
 import { ArrowLeft, History, RotateCcw, User } from "lucide-react";
-import { toast } from "sonner";
-import { useWardrobePieces } from "@/lib/wardrobe";
-import { addTryOn } from "@/lib/tryon-history";
+import { refreshTryOnHistory } from "@/lib/tryon-history";
+import { runTryOn } from "@/lib/tryon.functions";
 
 export const Route = createFileRoute("/app/provador")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -44,33 +44,43 @@ function getSelfie(): string | null {
 
 type Status = "loading" | "done" | "error";
 
+const GENERIC_ERROR = "Não conseguimos gerar essa prova agora. Tente novamente.";
+const LIMIT_ERROR = "Limite diário de provas atingido";
+
 function TryOnScreen() {
   const navigate = useNavigate();
   const { peca } = Route.useSearch();
-  const pieces = useWardrobePieces();
-  const piece = pieces.find((p) => p.id === peca) ?? null;
-  const selfie = getSelfie();
+  const tryOn = useServerFn(runTryOn);
 
   const [status, setStatus] = useState<Status>("loading");
-  const [saved, setSaved] = useState(false);
+  const [resultUrl, setResultUrl] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState(GENERIC_ERROR);
+  const [attempt, setAttempt] = useState(0);
 
-  // Simula o processamento da IA (2-3s) antes de revelar o resultado.
-  useEffect(() => {
-    if (status !== "loading") return;
-    const t = setTimeout(() => setStatus("done"), 2500);
-    return () => clearTimeout(t);
-  }, [status]);
-
-  function retry() {
+  const start = useCallback(async () => {
+    if (!peca) {
+      setErrorMessage(GENERIC_ERROR);
+      setStatus("error");
+      return;
+    }
     setStatus("loading");
-  }
+    try {
+      const result = await tryOn({
+        data: { wardrobeItemId: peca, avatarDataUrl: getSelfie() ?? undefined },
+      });
+      setResultUrl(result.imageUrl);
+      setStatus("done");
+      refreshTryOnHistory();
+    } catch (error) {
+      const raw = error instanceof Error ? error.message : "";
+      setErrorMessage(raw.includes("RATE_LIMIT") ? LIMIT_ERROR : raw || GENERIC_ERROR);
+      setStatus("error");
+    }
+  }, [peca, tryOn]);
 
-  function saveToHistory() {
-    if (!piece) return;
-    addTryOn(piece.src);
-    setSaved(true);
-    toast.success("Prova salva no histórico");
-  }
+  useEffect(() => {
+    void start();
+  }, [start, attempt]);
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-md flex-col px-6 pb-10 pt-6">
@@ -108,41 +118,26 @@ function TryOnScreen() {
             </div>
           ) : status === "error" ? (
             <div className="flex h-full w-full flex-col items-center justify-center gap-4 px-8 text-center">
-              <p className="text-base font-medium text-foreground">
-                Não conseguimos gerar essa prova agora. Tente novamente.
-              </p>
+              <p className="text-base font-medium text-foreground">{errorMessage}</p>
               <button
                 type="button"
-                onClick={retry}
+                onClick={() => setAttempt((n) => n + 1)}
                 className="flex min-h-[52px] items-center justify-center gap-2 rounded-full bg-primary px-8 text-base font-semibold text-primary-foreground"
               >
                 <RotateCcw size={18} />
                 Tentar novamente
               </button>
             </div>
+          ) : resultUrl ? (
+            <img
+              src={resultUrl}
+              alt="Resultado da prova"
+              className="h-full w-full object-cover"
+            />
           ) : (
-            <>
-              {/* Avatar (selfie do onboarding ou silhueta placeholder) */}
-              {selfie ? (
-                <img
-                  src={selfie}
-                  alt="Seu avatar"
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center">
-                  <User size={120} className="text-muted-foreground/50" strokeWidth={1} />
-                </div>
-              )}
-              {/* Peça sobreposta (composição placeholder) */}
-              {piece && (
-                <img
-                  src={piece.src}
-                  alt="Peça sendo provada"
-                  className="absolute inset-x-8 bottom-6 top-1/3 m-auto rounded-2xl object-cover opacity-95 shadow-xl"
-                />
-              )}
-            </>
+            <div className="flex h-full w-full items-center justify-center">
+              <User size={120} className="text-muted-foreground/50" strokeWidth={1} />
+            </div>
           )}
         </div>
       </div>
@@ -150,14 +145,12 @@ function TryOnScreen() {
       {/* Botões */}
       {status === "done" && (
         <div className="mt-auto flex flex-col gap-3 pt-8">
-          <button
-            type="button"
-            onClick={saveToHistory}
-            disabled={saved}
-            className="flex min-h-[52px] w-full items-center justify-center rounded-full bg-primary text-base font-semibold text-primary-foreground disabled:opacity-50"
+          <Link
+            to="/app/historico"
+            className="flex min-h-[52px] w-full items-center justify-center rounded-full bg-primary text-base font-semibold text-primary-foreground"
           >
-            {saved ? "Salvo no histórico" : "Salvar no histórico"}
-          </button>
+            Ver no histórico
+          </Link>
           <button
             type="button"
             onClick={() => navigate({ to: "/app/guarda-roupa" })}
@@ -167,16 +160,6 @@ function TryOnScreen() {
           </button>
         </div>
       )}
-
-      {/* Botão de teste escondido (só para desenvolvimento) */}
-      <button
-        type="button"
-        onClick={() => setStatus("error")}
-        aria-label="Simular erro de prova"
-        className="fixed bottom-24 right-3 z-30 rounded-full bg-muted px-2 py-1 text-[10px] text-muted-foreground/50"
-      >
-        Simular erro
-      </button>
     </main>
   );
 }
