@@ -8,7 +8,7 @@ const DAILY_LIMIT = 30;
 export const RATE_LIMIT_CODE = "RATE_LIMIT";
 export const EMPTY_WARDROBE_CODE = "EMPTY_WARDROBE";
 const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
-const DEFAULT_MODEL = "claude-sonnet-4-5";
+const DEFAULT_MODEL = "claude-sonnet-5";
 
 const SYSTEM_PROMPT = `Você é o Estilista da Veste, um consultor de moda pessoal brasileiro.
 Fale em português do Brasil, em tom acolhedor, direto e prático.
