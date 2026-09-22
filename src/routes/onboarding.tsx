@@ -30,7 +30,7 @@ export const Route = createFileRoute("/onboarding")({
   component: OnboardingFlow,
 });
 
-const STORAGE_KEY = "cabidy_onboarding_answers";
+export const STORAGE_KEY = "cabidy_onboarding_answers";
 
 interface Step {
   key: string;
