@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { lovable } from "@/integrations/lovable/index";
-import { LEGAL_URL } from "@/lib/legal";
+import { PRIVACY_PATH, TERMS_PATH } from "@/lib/legal";
 
 export const Route = createFileRoute("/")({
   head: () => ({
