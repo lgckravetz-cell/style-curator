@@ -71,8 +71,8 @@ const STEPS: Step[] = [
 const TOTAL_STEPS = STEPS.length + 1; // +1 = etapa da selfie
 
 const SELFIE_BENEFITS = [
-  "📷 Usamos sua selfie para criar seu avatar de prova",
-  "🖼️ É assim também que achamos seus looks na sua galeria",
+  { icon: Camera, text: "Usamos sua selfie para criar seu avatar de prova" },
+  { icon: Image, text: "É assim também que achamos seus looks na sua galeria" },
 ];
 
 function loadAnswers(): Record<string, string> {
