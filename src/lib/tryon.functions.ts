@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { newRequestId } from "@/lib/request-id";
 
 // Provador Virtual real: chama o Fal.ai (Kling Kolors v1.5), guarda o resultado
 // no bucket privado "tryon" e registra a prova em tryon_history.

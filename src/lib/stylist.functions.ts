@@ -157,7 +157,7 @@ export const askStylist = createServerFn({ method: "POST" })
 
     if (!response.ok) {
       const detail = await response.text();
-      console.error("[stylist-chat] Anthropic falhou", response.status, detail);
+      console.error(`[stylist-chat][${requestId}] Anthropic falhou`, response.status, detail);
       throw new Error("Não conseguimos falar com o estilista agora. Tente novamente.");
     }
 
@@ -170,7 +170,10 @@ export const askStylist = createServerFn({ method: "POST" })
       .join("\n")
       .trim();
 
-    if (!reply) throw new Error("Não conseguimos falar com o estilista agora. Tente novamente.");
+    if (!reply) {
+      console.error(`[stylist-chat][${requestId}] resposta da Anthropic sem texto utilizável`);
+      throw new Error("Não conseguimos falar com o estilista agora. Tente novamente.");
+    }
 
     await supabase.from("stylist_messages").insert([
       {
