@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { ArrowLeft, History, RotateCcw, User } from "lucide-react";
 import { refreshTryOnHistory } from "@/lib/tryon-history";
 import { runTryOn } from "@/lib/tryon.functions";
+import { STORAGE_KEY } from "@/routes/onboarding";
 
 export const Route = createFileRoute("/app/provador")({
   validateSearch: (search: Record<string, unknown>) => ({
