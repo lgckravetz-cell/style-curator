@@ -547,7 +547,18 @@ function RevealStep({ onContinue }: { onContinue: () => void }) {
     { icon: <Icon iconNode={hatBaseball} size={28} strokeWidth={1.5} />, label: "Boné" },
   ];
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="relative flex flex-1 flex-col">
+      {/* Textura de tecido sutil ao fundo */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-[0.18] mix-blend-multiply"
+        style={{
+          backgroundImage: `url(${linenTexture})`,
+          backgroundSize: "560px",
+          backgroundRepeat: "repeat",
+        }}
+      />
+      <div className="relative">
       <h1 className="mt-8 text-center font-display text-2xl font-extrabold leading-tight tracking-tight text-foreground">
         Nossos usuários criam mais de 1.000 looks com o que já têm
       </h1>
