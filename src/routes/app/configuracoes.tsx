@@ -17,7 +17,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { captureDevelopmentTestError } from "@/lib/sentry-browser";
-import { LEGAL_URL } from "@/lib/legal";
+import { PRIVACY_PATH, TERMS_PATH } from "@/lib/legal";
 import { deleteAccount } from "@/lib/account.functions";
 import {
   AlertDialog,
@@ -86,7 +86,8 @@ function SettingsScreen() {
   const [deleting, setDeleting] = useState(false);
   const runDeleteAccount = useServerFn(deleteAccount);
 
-  const openLegal = () => window.open(LEGAL_URL, "_blank", "noopener,noreferrer");
+  const openPrivacy = () => navigate({ to: PRIVACY_PATH });
+  const openTerms = () => navigate({ to: TERMS_PATH });
 
   async function confirmDelete() {
     setDeleting(true);
@@ -197,12 +198,12 @@ function SettingsScreen() {
         <Row
           icon={<ShieldCheck size={18} className="text-muted-foreground" />}
           label="Política de Privacidade"
-          onClick={openLegal}
+          onClick={openPrivacy}
         />
         <Row
           icon={<FileText size={18} className="text-muted-foreground" />}
           label="Termos de Uso"
-          onClick={openLegal}
+          onClick={openTerms}
         />
       </div>
 
