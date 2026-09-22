@@ -36,7 +36,7 @@ export const Route = createFileRoute("/app/estilista")({
 });
 
 const WELCOME =
-  "👋 Boas-vindas! Envie a foto de um look e eu descrevo as peças que consigo identificar. Também posso montar combinações com as peças do seu guarda-roupa.";
+  "Boas-vindas! Envie a foto de um look e eu descrevo as peças que consigo identificar. Também posso montar combinações com as peças do seu guarda-roupa.";
 
 const GENERIC_ERROR =
   "Não conseguimos falar com o estilista agora. Tente novamente.";
