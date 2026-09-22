@@ -30,7 +30,7 @@ export const Route = createFileRoute("/onboarding")({
   component: OnboardingFlow,
 });
 
-const STORAGE_KEY = "veste_onboarding_answers";
+const STORAGE_KEY = "sartoria_onboarding_answers";
 
 interface Step {
   key: string;
@@ -132,7 +132,7 @@ function OnboardingFlow() {
             onClick={goBack}
             disabled={step === 0}
             aria-label="Voltar"
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-border bg-card text-foreground transition-opacity disabled:opacity-30"
+            className="cursor-pointer flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-border bg-card text-foreground transition-opacity disabled:opacity-30"
           >
             <ArrowLeft size={20} />
           </button>
@@ -191,6 +191,19 @@ function OnboardingFlow() {
             {step + 1} de {TOTAL_STEPS}
           </p>
         </>
+      )}
+      {import.meta.env.DEV && (
+        <button
+          type="button"
+          onClick={() => {
+            sessionStorage.removeItem(STORAGE_KEY);
+            setAnswers({});
+            setStep(0);
+          }}
+          className="mx-auto mt-4 cursor-pointer text-xs text-muted-foreground underline underline-offset-4"
+        >
+          Recomeçar onboarding
+        </button>
       )}
     </main>
   );
@@ -410,7 +423,7 @@ function BottomSheet({
           type="button"
           onClick={onClose}
           aria-label="Fechar"
-          className="absolute right-5 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-muted text-muted-foreground"
+          className="cursor-pointer absolute right-5 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-muted text-muted-foreground"
         >
           <X size={16} />
         </button>
@@ -558,7 +571,7 @@ function RevealStep({ onContinue }: { onContinue: () => void }) {
       <button
         type="button"
         onClick={onContinue}
-        className="mt-6 flex min-h-[52px] w-full items-center justify-center rounded-full bg-primary text-base font-semibold text-primary-foreground"
+        className="cursor-pointer mt-6 flex min-h-[52px] w-full items-center justify-center rounded-full bg-primary text-base font-semibold text-primary-foreground"
       >
         Continuar
       </button>
@@ -597,7 +610,7 @@ function PaywallStep({ onClose }: { onClose: () => void }) {
             type="button"
             onClick={onClose}
             aria-label="Fechar"
-            className="absolute left-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-foreground/40 text-white backdrop-blur"
+            className="cursor-pointer absolute left-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-foreground/40 text-white backdrop-blur"
           >
             <X size={20} />
           </button>
@@ -658,15 +671,15 @@ function PaywallStep({ onClose }: { onClose: () => void }) {
         <button
           type="button"
           onClick={onClose}
-          className="flex min-h-[52px] w-full items-center justify-center rounded-full bg-foreground text-base font-semibold text-background"
+          className="cursor-pointer flex min-h-[52px] w-full items-center justify-center rounded-full bg-foreground text-base font-semibold text-background"
         >
           Continuar
         </button>
         <div className="mt-3 flex justify-center gap-6">
-          <button type="button" className="text-xs text-muted-foreground underline underline-offset-4">
+          <button type="button" className="cursor-pointer text-xs text-muted-foreground underline underline-offset-4">
             Restaurar compras
           </button>
-          <button type="button" className="text-xs text-muted-foreground underline underline-offset-4">
+          <button type="button" className="cursor-pointer text-xs text-muted-foreground underline underline-offset-4">
             Resgatar código
           </button>
         </div>
