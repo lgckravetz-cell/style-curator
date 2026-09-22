@@ -34,22 +34,18 @@ export const Route = createFileRoute("/app/estilista")({
   component: StylistScreen,
 });
 
-// ---- Dados de exemplo (serão substituídos pela IA real na fase de integração) ----
-
 const WELCOME =
-  "👋 Boas-vindas! Envie a foto de um look e eu encontro as peças com imagens e links de compra.";
+  "👋 Boas-vindas! Envie a foto de um look e eu descrevo as peças que consigo identificar. Também posso montar combinações com as peças do seu guarda-roupa.";
 
-const SAMPLE_PRODUCTS = [
-  { store: "Zara", name: "Blazer de linho", price: "R$ 299,90", emoji: "🧥" },
-  { store: "Bershka", name: "Calça wide leg", price: "R$ 179,90", emoji: "👖" },
-  { store: "Renner", name: "Camiseta básica", price: "R$ 49,90", emoji: "👕" },
-];
+const GENERIC_ERROR =
+  "Não conseguimos falar com o estilista agora. Tente novamente.";
+const LIMIT_ERROR =
+  "Você atingiu o limite de 30 mensagens nas últimas 24 horas. Tente novamente amanhã.";
 
 type ChatMessage =
   | { id: string; role: "user"; kind: "text"; text: string }
   | { id: string; role: "user"; kind: "photo"; src: string }
   | { id: string; role: "assistant"; kind: "text"; text: string }
-  | { id: string; role: "assistant"; kind: "products" }
   | { id: string; role: "assistant"; kind: "empty-wardrobe" };
 
 const INITIAL_MESSAGES: ChatMessage[] = [
@@ -61,59 +57,61 @@ type DistributiveOmit<T, K extends PropertyKey> = T extends unknown
   : never;
 
 function StylistScreen() {
-  const wardrobe = useWardrobePieces();
   const [messages, setMessages] = useState<ChatMessage[]>(INITIAL_MESSAGES);
   const [typing, setTyping] = useState(false);
   const [showSourceModal, setShowSourceModal] = useState(false);
   const galleryInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
-  const typingTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const stylist = useServerFn(askStylist);
 
   function push(msg: DistributiveOmit<ChatMessage, "id">) {
     setMessages((prev) => [...prev, { ...msg, id: crypto.randomUUID() } as ChatMessage]);
   }
 
-  function simulateProductsReply() {
+  async function ask(input: {
+    text?: string;
+    imageDataUrl?: string;
+    createLook?: boolean;
+  }) {
     setTyping(true);
-    if (typingTimer.current) clearTimeout(typingTimer.current);
-    typingTimer.current = setTimeout(() => {
+    try {
+      const result = await stylist({ data: input });
+      push({ role: "assistant", kind: "text", text: result.reply });
+    } catch (error) {
+      const raw = error instanceof Error ? error.message : "";
+      if (raw.includes("EMPTY_WARDROBE")) {
+        push({ role: "assistant", kind: "empty-wardrobe" });
+      } else if (raw.includes("RATE_LIMIT")) {
+        push({ role: "assistant", kind: "text", text: LIMIT_ERROR });
+      } else {
+        push({ role: "assistant", kind: "text", text: raw || GENERIC_ERROR });
+      }
+    } finally {
       setTyping(false);
-      push({ role: "assistant", kind: "products" });
-    }, 1500);
+    }
   }
 
   function handleSubmit(message: PromptInputMessage) {
     const text = message.text.trim();
     if (!text) return;
     push({ role: "user", kind: "text", text });
-    simulateProductsReply();
+    void ask({ text });
   }
 
   function handleScanFile(file: File | undefined) {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = () => {
-      push({ role: "user", kind: "photo", src: reader.result as string });
-      simulateProductsReply();
+      const src = reader.result as string;
+      push({ role: "user", kind: "photo", src });
+      void ask({ imageDataUrl: src });
     };
     reader.readAsDataURL(file);
   }
 
   function handleCreateLook() {
-    if (wardrobe.length === 0) {
-      push({ role: "assistant", kind: "empty-wardrobe" });
-      return;
-    }
-    setTyping(true);
-    if (typingTimer.current) clearTimeout(typingTimer.current);
-    typingTimer.current = setTimeout(() => {
-      setTyping(false);
-      push({
-        role: "assistant",
-        kind: "text",
-        text: "Ainda estou aprendendo a montar looks com suas peças — em breve te mostro combinações por aqui! ✨",
-      });
-    }, 1500);
+    push({ role: "user", kind: "text", text: "Criar look com meu guarda-roupa" });
+    void ask({ createLook: true });
   }
 
   return (
