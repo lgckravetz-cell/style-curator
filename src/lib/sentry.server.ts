@@ -1,4 +1,5 @@
 import * as Sentry from "@sentry/cloudflare";
+import type { CloudflareOptions } from "@sentry/cloudflare";
 
 type SafeErrorContext = {
   requestId: string;
@@ -7,13 +8,13 @@ type SafeErrorContext = {
   operation?: string;
 };
 
-export function sentryServerOptions() {
+export function sentryServerOptions(): CloudflareOptions {
   return {
     dsn: process.env["SENTRY_DSN"],
     environment: process.env["NODE_ENV"] === "development" ? "development" : "production",
     enableLogs: true,
     sendDefaultPii: false,
-    beforeSend(event: Sentry.Event) {
+    beforeSend(event) {
       delete event.request;
       delete event.extra;
       delete event.contexts;

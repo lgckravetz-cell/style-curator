@@ -6,18 +6,6 @@ const SENTRY_DSN =
 
 let initialized = false;
 
-function sanitizeEvent<T extends { request?: unknown; extra?: unknown; contexts?: unknown }>(event: T): T {
-  delete event.request;
-  delete event.extra;
-  delete event.contexts;
-  const tags = "tags" in event && typeof event.tags === "object" ? event.tags : {};
-  if (!("request_id" in tags)) {
-    Object.assign(tags, { request_id: crypto.randomUUID().replace(/-/g, "").slice(0, 8) });
-  }
-  Object.assign(event, { tags });
-  return event;
-}
-
 export function initClientSentry(): void {
   if (initialized || typeof window === "undefined") return;
   initialized = true;
@@ -27,7 +15,17 @@ export function initClientSentry(): void {
     environment: import.meta.env.DEV ? "development" : "production",
     enableLogs: true,
     sendDefaultPii: false,
-    beforeSend: sanitizeEvent,
+    beforeSend(event) {
+      delete event.request;
+      delete event.extra;
+      delete event.contexts;
+      event.tags = {
+        ...event.tags,
+        request_id:
+          event.tags?.["request_id"] ?? crypto.randomUUID().replace(/-/g, "").slice(0, 8),
+      };
+      return event;
+    },
     beforeSendLog(log) {
       log.attributes = {
         ...log.attributes,
