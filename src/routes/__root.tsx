@@ -12,6 +12,9 @@ import { Toaster } from "sonner";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { initClientSentry } from "../lib/sentry.client";
+
+initClientSentry();
 
 function NotFoundComponent() {
   return (
