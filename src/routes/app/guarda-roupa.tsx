@@ -2,11 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { Camera, Image, Loader2, Plus, Shirt, X } from "lucide-react";
 import { toast } from "sonner";
-import {
-  addWardrobePiece,
-  markWardrobeProcessed,
-  useWardrobePieces,
-} from "@/lib/wardrobe";
+import { addWardrobePiece, useWardrobePieces } from "@/lib/wardrobe";
 
 export const Route = createFileRoute("/app/guarda-roupa")({
   head: () => ({
