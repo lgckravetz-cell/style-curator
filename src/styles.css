@@ -58,8 +58,8 @@
 
 :root {
   --radius: 1rem;
-  --font-display: "Archivo", system-ui, sans-serif;
-  --font-body: "Archivo", system-ui, sans-serif;
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Inter", system-ui, sans-serif;
 
   /* Base: bege claro #F0EAE0 */
   --background: oklch(0.934 0.019 82.6);
