@@ -63,7 +63,7 @@ function ProfileScreen() {
       <button
         type="button"
         onClick={() => toast("Em breve você poderá escolher seu nome de usuário")}
-        className="mt-6 flex min-h-[52px] w-full items-center gap-4 rounded-3xl border border-border bg-card p-4 text-left"
+        className="mt-6 flex min-h-[52px] w-full items-center gap-4 rounded-3xl border border-border bg-card p-4 text-left active:scale-[0.98] transition-transform duration-150"
       >
         <span className="flex h-14 w-14 items-center justify-center rounded-full bg-muted">
           <Camera size={22} className="text-muted-foreground" />
@@ -85,7 +85,7 @@ function ProfileScreen() {
           <button
             type="button"
             onClick={() => toast("Em breve: análise de coloração pessoal")}
-            className="text-sm font-semibold text-primary"
+            className="text-sm font-semibold text-primary active:scale-[0.98] transition-transform duration-150"
           >
             Descobrir coloração pessoal
           </button>
@@ -150,7 +150,7 @@ function ProfileScreen() {
         <button
           type="button"
           onClick={shareInvite}
-          className="mt-4 flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full bg-primary text-base font-semibold text-primary-foreground"
+          className="mt-4 flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full bg-primary text-base font-semibold text-primary-foreground active:scale-[0.98] transition-transform duration-150"
         >
           <Share2 size={18} />
           Compartilhar

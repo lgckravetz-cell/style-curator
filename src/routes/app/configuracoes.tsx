@@ -62,7 +62,7 @@ function Row({
     <button
       type="button"
       onClick={onClick}
-      className="flex min-h-[52px] w-full items-center justify-between border-b border-border px-1 last:border-b-0"
+      className="flex min-h-[52px] w-full items-center justify-between border-b border-border px-1 last:border-b-0 active:scale-[0.98] transition-transform duration-150"
     >
       <span
         className={`flex items-center gap-3 text-base font-medium ${
@@ -119,7 +119,7 @@ function SettingsScreen() {
           type="button"
           aria-label="Voltar"
           onClick={() => navigate({ to: "/app/perfil" })}
-          className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-card text-foreground"
+          className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-card text-foreground active:scale-[0.98] transition-transform duration-150"
         >
           <ArrowLeft size={20} />
         </button>
@@ -213,7 +213,7 @@ function SettingsScreen() {
             key={network}
             type="button"
             onClick={soon}
-            className="rounded-full border border-border bg-card px-5 py-2.5 text-sm font-medium text-foreground"
+            className="rounded-full border border-border bg-card px-5 py-2.5 text-sm font-medium text-foreground active:scale-[0.98] transition-transform duration-150"
           >
             {network}
           </button>

@@ -172,7 +172,7 @@ function StylistScreen() {
         <button
           type="button"
           onClick={() => setShowSourceModal(true)}
-          className="flex min-h-[40px] flex-1 items-center justify-center gap-2 rounded-full border border-border bg-card text-sm font-medium text-foreground"
+          className="flex min-h-[40px] flex-1 items-center justify-center gap-2 rounded-full border border-border bg-card text-sm font-medium text-foreground active:scale-[0.98] transition-transform duration-150"
         >
           <Camera size={16} />
           Escanear look
@@ -180,7 +180,7 @@ function StylistScreen() {
         <button
           type="button"
           onClick={handleCreateLook}
-          className="flex min-h-[40px] flex-1 items-center justify-center gap-2 rounded-full border border-border bg-card text-sm font-medium text-foreground"
+          className="flex min-h-[40px] flex-1 items-center justify-center gap-2 rounded-full border border-border bg-card text-sm font-medium text-foreground active:scale-[0.98] transition-transform duration-150"
         >
           <Shirt size={16} />
           Criar look
@@ -201,7 +201,7 @@ function StylistScreen() {
             type="button"
             aria-label="Anexar imagem"
             onClick={() => setShowSourceModal(true)}
-            className="flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted"
+            className="flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted active:scale-[0.98] transition-transform duration-150"
           >
             <Paperclip size={18} />
           </button>
@@ -255,7 +255,7 @@ function StylistScreen() {
               type="button"
               onClick={() => setShowSourceModal(false)}
               aria-label="Fechar"
-              className="absolute right-5 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-muted text-muted-foreground"
+              className="absolute right-5 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-muted text-muted-foreground active:scale-[0.98] transition-transform duration-150"
             >
               <X size={16} />
             </button>
@@ -266,7 +266,7 @@ function StylistScreen() {
                   setShowSourceModal(false);
                   cameraInputRef.current?.click();
                 }}
-                className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full bg-primary text-base font-semibold text-primary-foreground"
+                className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full bg-primary text-base font-semibold text-primary-foreground active:scale-[0.98] transition-transform duration-150"
               >
                 <Camera size={20} />
                 Câmera
@@ -277,7 +277,7 @@ function StylistScreen() {
                   setShowSourceModal(false);
                   galleryInputRef.current?.click();
                 }}
-                className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full border border-border bg-card text-base font-semibold text-foreground"
+                className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full border border-border bg-card text-base font-semibold text-foreground active:scale-[0.98] transition-transform duration-150"
               >
                 <ImageIcon size={20} />
                 Fotos
@@ -285,7 +285,7 @@ function StylistScreen() {
               <button
                 type="button"
                 onClick={() => setShowSourceModal(false)}
-                className="mt-1 text-sm font-medium text-muted-foreground"
+                className="mt-1 text-sm font-medium text-muted-foreground active:scale-[0.98] transition-transform duration-150"
               >
                 Cancelar
               </button>

@@ -96,7 +96,7 @@ function LoginScreen() {
             type="button"
             onClick={() => signIn("apple")}
             disabled={loading !== null}
-            className="btn-pill bg-foreground text-background"
+            className="btn-pill bg-foreground text-background active:scale-[0.98] transition-transform duration-150"
           >
             <AppleIcon />
             {loading === "apple" ? "Entrando…" : "Entrar com a Apple"}
@@ -106,7 +106,7 @@ function LoginScreen() {
             type="button"
             onClick={() => signIn("google")}
             disabled={loading !== null}
-            className="btn-pill border border-border bg-card text-foreground"
+            className="btn-pill border border-border bg-card text-foreground active:scale-[0.98] transition-transform duration-150"
           >
             <GoogleIcon />
             {loading === "google" ? "Entrando…" : "Entrar com o Google"}

@@ -34,7 +34,7 @@ function TryOnHistoryScreen() {
           type="button"
           onClick={() => navigate({ to: "/app/guarda-roupa" })}
           aria-label="Voltar"
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-border bg-card text-foreground"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-border bg-card text-foreground active:scale-[0.98] transition-transform duration-150"
         >
           <ArrowLeft size={20} />
         </button>
