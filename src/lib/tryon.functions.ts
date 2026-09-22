@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { newRequestId } from "@/lib/request-id";
 
 // Provador Virtual real: chama o Fal.ai (Kling Kolors v1.5), guarda o resultado
 // no bucket privado "tryon" e registra a prova em tryon_history.
@@ -34,9 +35,13 @@ export const runTryOn = createServerFn({ method: "POST" })
     return input;
   })
   .handler(async ({ data, context }) => {
+    const requestId = newRequestId();
     const { supabase, userId } = context;
     const falKey = process.env["FAL_API_KEY"] ?? process.env["APIFALAI"];
-    if (!falKey) throw new Error("O provador virtual não está configurado.");
+    if (!falKey) {
+      console.error(`[try-on][${requestId}] FAL_API_KEY/APIFALAI ausente no ambiente do servidor`);
+      throw new Error("O provador virtual não está configurado.");
+    }
 
     // Rate limiting: só provas concluídas com sucesso contam para a cota.
     const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
@@ -140,7 +145,7 @@ export const runTryOn = createServerFn({ method: "POST" })
 
       return { imageUrl: signed?.signedUrl ?? "", path: resultPath };
     } catch (error) {
-      console.error("[try-on] falha", error);
+      console.error(`[try-on][${requestId}] falha`, error);
       await supabase.from("tryon_history").insert({
         user_id: userId,
         wardrobe_item_id: item.id,

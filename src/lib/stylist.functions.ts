@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { newRequestId } from "@/lib/request-id";
 
 // Estilista real: conversa com a Anthropic (Claude), com limite de 30 mensagens
 // por usuário a cada 24h e acesso às peças reais do guarda-roupa.
@@ -46,9 +47,11 @@ export const askStylist = createServerFn({ method: "POST" })
     return input;
   })
   .handler(async ({ data, context }) => {
+    const requestId = newRequestId();
     const { supabase, userId } = context;
     const apiKey = process.env["ANTHROPIC_API_KEY"];
     if (!apiKey) {
+      console.error(`[stylist-chat][${requestId}] ANTHROPIC_API_KEY ausente no ambiente do servidor`);
       throw new Error("O estilista ainda não está configurado. Salve a chave da Anthropic para ativá-lo.");
     }
 
@@ -154,7 +157,7 @@ export const askStylist = createServerFn({ method: "POST" })
 
     if (!response.ok) {
       const detail = await response.text();
-      console.error("[stylist-chat] Anthropic falhou", response.status, detail);
+      console.error(`[stylist-chat][${requestId}] Anthropic falhou`, response.status, detail);
       throw new Error("Não conseguimos falar com o estilista agora. Tente novamente.");
     }
 
@@ -167,7 +170,10 @@ export const askStylist = createServerFn({ method: "POST" })
       .join("\n")
       .trim();
 
-    if (!reply) throw new Error("Não conseguimos falar com o estilista agora. Tente novamente.");
+    if (!reply) {
+      console.error(`[stylist-chat][${requestId}] resposta da Anthropic sem texto utilizável`);
+      throw new Error("Não conseguimos falar com o estilista agora. Tente novamente.");
+    }
 
     await supabase.from("stylist_messages").insert([
       {
