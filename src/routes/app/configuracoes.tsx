@@ -119,13 +119,20 @@ function SettingsScreen() {
           icon={<Calendar size={18} className="text-muted-foreground" />}
           label="Calendário"
           trailing={
-            <button
-              type="button"
+            <span
+              role="button"
+              tabIndex={0}
               onClick={soon}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  soon();
+                }
+              }}
               className="text-sm font-semibold text-primary"
             >
               Conectar
-            </button>
+            </span>
           }
         />
         <Row
