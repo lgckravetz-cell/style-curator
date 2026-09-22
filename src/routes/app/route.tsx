@@ -27,12 +27,16 @@ function AppLayout() {
             <Link
               key={to}
               to={to}
-              className="flex min-w-[60px] flex-col items-center gap-1 rounded-xl px-2 py-1.5"
+              className="flex min-w-[60px] flex-col items-center gap-1 rounded-xl px-2 py-1.5 [&[aria-current=page]_svg]:fill-current [&[aria-current=page]_svg]:stroke-2"
               activeProps={{ className: "text-primary" }}
               inactiveProps={{ className: "text-muted-foreground" }}
               activeOptions={{ exact: true }}
             >
-              <Icon size={22} strokeWidth={2} />
+              <Icon
+                size={22}
+                strokeWidth={1.5}
+                className="fill-transparent transition-[fill,stroke] duration-150"
+              />
               <span className="text-[11px] font-medium">{label}</span>
             </Link>
           ))}
