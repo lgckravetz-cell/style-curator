@@ -192,6 +192,20 @@ function SettingsScreen() {
         />
       </div>
 
+      {/* Legal */}
+      <div className="mt-4 rounded-3xl border border-border bg-card px-5">
+        <Row
+          icon={<ShieldCheck size={18} className="text-muted-foreground" />}
+          label="Política de Privacidade"
+          onClick={openLegal}
+        />
+        <Row
+          icon={<FileText size={18} className="text-muted-foreground" />}
+          label="Termos de Uso"
+          onClick={openLegal}
+        />
+      </div>
+
       {/* Redes sociais */}
       <div className="mt-4 flex items-center justify-center gap-3">
         {["Instagram", "TikTok", "Discord"].map((network) => (
