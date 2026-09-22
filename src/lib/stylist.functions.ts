@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { newRequestId } from "@/lib/request-id";
 
 // Estilista real: conversa com a Anthropic (Claude), com limite de 30 mensagens
 // por usuário a cada 24h e acesso às peças reais do guarda-roupa.
