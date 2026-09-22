@@ -145,7 +145,7 @@ export const runTryOn = createServerFn({ method: "POST" })
 
       return { imageUrl: signed?.signedUrl ?? "", path: resultPath };
     } catch (error) {
-      console.error("[try-on] falha", error);
+      console.error(`[try-on][${requestId}] falha`, error);
       await supabase.from("tryon_history").insert({
         user_id: userId,
         wardrobe_item_id: item.id,
