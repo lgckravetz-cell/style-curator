@@ -32,7 +32,7 @@ export const Route = createFileRoute("/app/provador")({
 function getSelfie(): string | null {
   try {
     const answers = JSON.parse(
-      sessionStorage.getItem("veste_onboarding_answers") ?? "{}",
+      sessionStorage.getItem(STORAGE_KEY) ?? "{}",
     );
     const selfie = answers["selfie"];
     return typeof selfie === "string" && selfie.startsWith("data:")
