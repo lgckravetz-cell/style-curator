@@ -592,6 +592,7 @@ function RevealStep({ onContinue }: { onContinue: () => void }) {
       >
         Continuar
       </button>
+      </div>
     </div>
   );
 }
