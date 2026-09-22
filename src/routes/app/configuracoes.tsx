@@ -34,10 +34,10 @@ const PAYWALL_STEP = 7;
 export const Route = createFileRoute("/app/configuracoes")({
   head: () => ({
     meta: [
-      { title: "Configurações — Sartoria" },
-      { name: "description", content: "Ajustes da sua conta na Sartoria." },
-      { property: "og:title", content: "Configurações — Sartoria" },
-      { property: "og:description", content: "Ajustes da sua conta na Sartoria." },
+      { title: "Configurações — Cabidy" },
+      { name: "description", content: "Ajustes da sua conta na Cabidy." },
+      { property: "og:title", content: "Configurações — Cabidy" },
+      { property: "og:description", content: "Ajustes da sua conta na Cabidy." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],

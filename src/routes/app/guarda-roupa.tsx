@@ -7,13 +7,13 @@ import { addWardrobePiece, useWardrobePieces } from "@/lib/wardrobe";
 export const Route = createFileRoute("/app/guarda-roupa")({
   head: () => ({
     meta: [
-      { title: "Guarda-roupa — Sartoria" },
+      { title: "Guarda-roupa — Cabidy" },
       {
         name: "description",
         content:
           "Organize as fotos das suas roupas e monte looks com o que você já tem.",
       },
-      { property: "og:title", content: "Guarda-roupa — Sartoria" },
+      { property: "og:title", content: "Guarda-roupa — Cabidy" },
       {
         property: "og:description",
         content:

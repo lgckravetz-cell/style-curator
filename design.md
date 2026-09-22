@@ -1,4 +1,4 @@
-# Design system — Sartoria
+# Design system — Cabidy
 
 Este documento registra o sistema visual atualmente definido em `src/styles.css`. Os nomes abaixo são semânticos: telas e componentes devem usar o papel visual do token, não seu valor de cor diretamente.
 

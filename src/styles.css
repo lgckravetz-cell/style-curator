@@ -5,7 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Design system — Sartoria (guarda-roupa & estilo pessoal)
+ * Design system — Cabidy (guarda-roupa & estilo pessoal)
  * Base bege claro, CTA marrom-oliva, botões pill, espaçamento generoso.
  */
 
@@ -58,7 +58,7 @@
 
 :root {
   --radius: 1rem;
-  --font-display: "Fraunces", Georgia, serif;
+  --font-display: "Archivo Black", sans-serif;
   --font-body: "Inter", system-ui, sans-serif;
 
   /* Base: bege claro #F0EAE0 */
