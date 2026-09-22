@@ -224,9 +224,10 @@ function SelfieStep({ onDone }: { onDone: (value: string) => void }) {
 
       {/* Benefícios */}
       <div className="mt-5 flex flex-col gap-2">
-        {SELFIE_BENEFITS.map((line) => (
-          <p key={line} className="text-sm leading-relaxed text-muted-foreground">
-            {line}
+        {SELFIE_BENEFITS.map(({ icon: BenefitIcon, text }) => (
+          <p key={text} className="flex items-center gap-2 text-sm leading-relaxed text-muted-foreground">
+            <BenefitIcon size={16} strokeWidth={1.5} className="shrink-0" />
+            {text}
           </p>
         ))}
       </div>
