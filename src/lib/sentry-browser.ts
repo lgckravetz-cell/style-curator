@@ -2,7 +2,7 @@ import * as Sentry from "@sentry/react";
 import { supabase } from "@/integrations/supabase/client";
 
 const SENTRY_DSN =
-  "https://2a6f4566350c2aa9a0864b723b1ea2340e4512131807051776.ingest.de.sentry.io/4512131813867600";
+  "https://2a6f4566350c2aa9a0864b723b1ea234@o4512131807051776.ingest.de.sentry.io/4512131813867600";
 
 let initialized = false;
 
