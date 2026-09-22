@@ -189,7 +189,7 @@ function SettingsScreen() {
         <Button
           type="button"
           variant="ghost"
-          onClick={captureDevelopmentTestError}
+          onClick={() => void captureDevelopmentTestError()}
           className="mt-4 self-center text-xs text-muted-foreground"
         >
           Testar Sentry

@@ -46,7 +46,7 @@ export function initClientSentry(): void {
   });
 }
 
-export function captureDevelopmentTestError(): void {
+export async function captureDevelopmentTestError(): Promise<void> {
   const requestId = crypto.randomUUID().replace(/-/g, "").slice(0, 8);
   const error = new Error("Teste manual do Sentry");
   Sentry.withScope((scope) => {
@@ -58,4 +58,5 @@ export function captureDevelopmentTestError(): void {
       area: "settings-test",
     });
   });
+  await Sentry.flush(2_000);
 }
