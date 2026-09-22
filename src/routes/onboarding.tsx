@@ -614,7 +614,17 @@ function PaywallStep({ onClose }: { onClose: () => void }) {
   ];
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-background">
-      <div className="flex-1 overflow-y-auto">
+      {/* Textura de tecido sutil ao fundo */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-[0.16] mix-blend-multiply"
+        style={{
+          backgroundImage: `url(${linenTexture})`,
+          backgroundSize: "560px",
+          backgroundRepeat: "repeat",
+        }}
+      />
+      <div className="relative flex-1 overflow-y-auto">
         {/* Imagem de fundo lifestyle + X */}
         <div className="relative h-56 w-full overflow-hidden">
           <img
