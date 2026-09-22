@@ -47,9 +47,11 @@ export const askStylist = createServerFn({ method: "POST" })
     return input;
   })
   .handler(async ({ data, context }) => {
+    const requestId = newRequestId();
     const { supabase, userId } = context;
     const apiKey = process.env["ANTHROPIC_API_KEY"];
     if (!apiKey) {
+      console.error(`[stylist-chat][${requestId}] ANTHROPIC_API_KEY ausente no ambiente do servidor`);
       throw new Error("O estilista ainda não está configurado. Salve a chave da Anthropic para ativá-lo.");
     }
 
