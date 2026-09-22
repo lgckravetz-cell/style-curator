@@ -115,23 +115,13 @@ function LoginScreen() {
 
         <p className="mt-6 text-center text-xs leading-relaxed text-muted-foreground">
           Ao entrar, você concorda com nossos{" "}
-          <a
-            href={LEGAL_URL}
-            target="_blank"
-            rel="noreferrer noopener"
-            className="underline underline-offset-2"
-          >
+          <Link to={TERMS_PATH} className="underline underline-offset-2">
             Termos
-          </a>{" "}
+          </Link>{" "}
           e{" "}
-          <a
-            href={LEGAL_URL}
-            target="_blank"
-            rel="noreferrer noopener"
-            className="underline underline-offset-2"
-          >
+          <Link to={PRIVACY_PATH} className="underline underline-offset-2">
             Política de Privacidade
-          </a>
+          </Link>
           .
         </p>
       </div>
