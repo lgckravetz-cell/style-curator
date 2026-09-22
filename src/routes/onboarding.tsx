@@ -518,10 +518,10 @@ function TaskItem({ done, label }: { done: boolean; label: string }) {
 
 function RevealStep({ onContinue }: { onContinue: () => void }) {
   const items = [
-    { emoji: "👜", label: "Bolsa" },
-    { emoji: "👕", label: "Blusa" },
-    { emoji: "👖", label: "Calça" },
-    { emoji: "🧢", label: "Boné" },
+    { icon: ShoppingBag, label: "Bolsa" },
+    { icon: Shirt, label: "Blusa" },
+    { icon: trousers, label: "Calça" },
+    { icon: hatBaseball, label: "Boné" },
   ];
   return (
     <div className="flex flex-1 flex-col">
@@ -531,14 +531,22 @@ function RevealStep({ onContinue }: { onContinue: () => void }) {
 
       {/* Carrossel horizontal de miniaturas */}
       <div className="mt-6 flex gap-3 overflow-x-auto pb-2">
-        {items.map((it) => (
-          <div key={it.label} className="flex w-20 shrink-0 flex-col items-center gap-2">
-            <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-card text-3xl">
-              {it.emoji}
+        {items.map((it) => {
+          const PieceIcon =
+            typeof it.icon === "function" ? it.icon : null;
+          return (
+            <div key={it.label} className="flex w-20 shrink-0 flex-col items-center gap-2">
+              <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-card text-foreground">
+                {PieceIcon ? (
+                  <PieceIcon size={28} strokeWidth={1.5} />
+                ) : (
+                  <Icon iconNode={it.icon} size={28} strokeWidth={1.5} />
+                )}
+              </div>
+              <span className="text-xs text-muted-foreground">{it.label}</span>
             </div>
-            <span className="text-xs text-muted-foreground">{it.label}</span>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Card maior: combinação de look montada */}
