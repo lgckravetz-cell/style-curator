@@ -168,12 +168,13 @@ function OnboardingFlow() {
                   <button
                     key={option}
                     type="button"
+                    disabled={processing}
                     onClick={() => choose(option)}
                     className={`flex min-h-[52px] w-full items-center justify-between rounded-full border px-6 text-left text-base font-medium transition-colors ${
                       selected
                         ? "border-primary bg-primary text-primary-foreground"
                         : "border-border bg-card text-foreground"
-                    }`}
+                    } ${processing ? "pointer-events-none opacity-60" : ""}`}
                   >
                     {option}
                     <ChevronRight
