@@ -10,6 +10,11 @@ function sanitizeEvent<T extends { request?: unknown; extra?: unknown; contexts?
   delete event.request;
   delete event.extra;
   delete event.contexts;
+  const tags = "tags" in event && typeof event.tags === "object" ? event.tags : {};
+  if (!("request_id" in tags)) {
+    Object.assign(tags, { request_id: crypto.randomUUID().replace(/-/g, "").slice(0, 8) });
+  }
+  Object.assign(event, { tags });
   return event;
 }
 
@@ -20,11 +25,19 @@ export function initClientSentry(): void {
   Sentry.init({
     dsn: SENTRY_DSN,
     environment: import.meta.env.DEV ? "development" : "production",
-    enabled: import.meta.env.PROD,
     enableLogs: true,
     sendDefaultPii: false,
     beforeSend: sanitizeEvent,
-    beforeSendLog: sanitizeEvent,
+    beforeSendLog(log) {
+      log.attributes = {
+        ...log.attributes,
+        request_id:
+          typeof log.attributes?.["request_id"] === "string"
+            ? log.attributes["request_id"]
+            : crypto.randomUUID().replace(/-/g, "").slice(0, 8),
+      };
+      return log;
+    },
   });
 
   void supabase.auth.getSession().then(({ data }) => {

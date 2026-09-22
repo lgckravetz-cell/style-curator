@@ -11,16 +11,23 @@ export function sentryServerOptions() {
   return {
     dsn: process.env["SENTRY_DSN"],
     environment: process.env["NODE_ENV"] === "development" ? "development" : "production",
-    enabled: process.env["NODE_ENV"] !== "development",
     enableLogs: true,
     sendDefaultPii: false,
     beforeSend(event: Sentry.Event) {
       delete event.request;
       delete event.extra;
       delete event.contexts;
+      event.tags = { ...event.tags, request_id: event.tags?.["request_id"] ?? "untracked" };
       return event;
     },
-    beforeSendLog(log: Sentry.Log) {
+    beforeSendLog(log) {
+      log.attributes = {
+        ...log.attributes,
+        request_id:
+          typeof log.attributes?.["request_id"] === "string"
+            ? log.attributes["request_id"]
+            : "untracked",
+      };
       return log;
     },
   };
