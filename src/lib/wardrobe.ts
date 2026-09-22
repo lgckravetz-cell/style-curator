@@ -77,7 +77,7 @@ export function useWardrobePieces(): WardrobePiece[] {
 
 function dataUrlToBlob(dataUrl: string): { blob: Blob; ext: string } {
   const [header, base64] = dataUrl.split(",");
-  const mime = header.match(/data:(.*?);/)?.[1] ?? "image/jpeg";
+  const mime = (header ?? "").match(/data:(.*?);/)?.[1] ?? "image/jpeg";
   const bytes = Uint8Array.from(atob(base64 ?? ""), (c) => c.charCodeAt(0));
   const ext = mime.split("/")[1]?.replace("jpeg", "jpg") ?? "jpg";
   return { blob: new Blob([bytes], { type: mime }), ext };
