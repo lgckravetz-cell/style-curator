@@ -82,6 +82,26 @@ function Row({
 function SettingsScreen() {
   const navigate = useNavigate();
   const soon = () => toast("Em breve por aqui");
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const runDeleteAccount = useServerFn(deleteAccount);
+
+  const openLegal = () => window.open(LEGAL_URL, "_blank", "noopener,noreferrer");
+
+  async function confirmDelete() {
+    setDeleting(true);
+    try {
+      await runDeleteAccount();
+      await supabase.auth.signOut();
+      setConfirmOpen(false);
+      toast.success("Conta excluída.");
+      navigate({ to: "/" });
+    } catch {
+      toast.error("Não foi possível excluir a conta. Tente novamente.");
+    } finally {
+      setDeleting(false);
+    }
+  }
 
   async function signOut() {
     try {
