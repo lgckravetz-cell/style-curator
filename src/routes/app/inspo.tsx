@@ -4,9 +4,9 @@ import { Sparkles } from "lucide-react";
 export const Route = createFileRoute("/app/inspo")({
   head: () => ({
     meta: [
-      { title: "Inspo — Veste" },
+      { title: "Inspo — Sartoria" },
       { name: "description", content: "Inspirações de estilo selecionadas para você." },
-      { property: "og:title", content: "Inspo — Veste" },
+      { property: "og:title", content: "Inspo — Sartoria" },
       { property: "og:description", content: "Inspirações de estilo selecionadas para você." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

@@ -14,10 +14,10 @@ const PAYWALL_STEP = 7;
 export const Route = createFileRoute("/app/perfil")({
   head: () => ({
     meta: [
-      { title: "Perfil — Veste" },
-      { name: "description", content: "Sua conta e preferências na Veste." },
-      { property: "og:title", content: "Perfil — Veste" },
-      { property: "og:description", content: "Sua conta e preferências na Veste." },
+      { title: "Perfil — Sartoria" },
+      { name: "description", content: "Sua conta e preferências na Sartoria." },
+      { property: "og:title", content: "Perfil — Sartoria" },
+      { property: "og:description", content: "Sua conta e preferências na Sartoria." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -30,10 +30,10 @@ const BRANDS = ["Zara", "Renner", "C&A", "Farm", "Le Lis"];
 function ProfileScreen() {
   async function shareInvite() {
     const url = `${window.location.origin}`;
-    const text = "Baixe a Veste e monte looks com o que você já tem!";
+    const text = "Baixe a Sartoria e monte looks com o que você já tem!";
     if (navigator.share) {
       try {
-        await navigator.share({ title: "Veste", text, url });
+        await navigator.share({ title: "Sartoria", text, url });
       } catch {
         // usuário cancelou o compartilhamento
       }

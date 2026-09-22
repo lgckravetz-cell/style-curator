@@ -81,13 +81,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Veste — Seu guarda-roupa inteligente" },
+      { title: "Sartoria — Seu guarda-roupa inteligente" },
       {
         name: "description",
         content:
           "App de guarda-roupa e estilo pessoal com IA. Organize suas peças, monte looks e receba conselhos de estilista.",
       },
-      { property: "og:title", content: "Veste — Seu guarda-roupa inteligente" },
+      { property: "og:title", content: "Sartoria — Seu guarda-roupa inteligente" },
       {
         property: "og:description",
         content:

@@ -6,17 +6,17 @@ import { lovable } from "@/integrations/lovable/index";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Veste — Seu guarda-roupa inteligente" },
+      { title: "Sartoria — Seu guarda-roupa inteligente" },
       {
         name: "description",
         content:
-          "Entre na Veste com Apple ou Google e descubra looks, organize seu guarda-roupa e receba conselhos de estilo com IA.",
+          "Entre na Sartoria com Apple ou Google e descubra looks, organize seu guarda-roupa e receba conselhos de estilo com IA.",
       },
-      { property: "og:title", content: "Veste — Seu guarda-roupa inteligente" },
+      { property: "og:title", content: "Sartoria — Seu guarda-roupa inteligente" },
       {
         property: "og:description",
         content:
-          "Entre na Veste com Apple ou Google e descubra looks, organize seu guarda-roupa e receba conselhos de estilo com IA.",
+          "Entre na Sartoria com Apple ou Google e descubra looks, organize seu guarda-roupa e receba conselhos de estilo com IA.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -81,7 +81,7 @@ function LoginScreen() {
       {/* Logo */}
       <div className="flex flex-1 flex-col items-center justify-center text-center">
         <h1 className="font-display text-6xl font-extrabold tracking-tight text-foreground">
-          Veste
+          Sartoria
         </h1>
         <p className="mt-4 max-w-[260px] text-base leading-relaxed text-muted-foreground">
           Seu guarda-roupa e estilo pessoal, com IA.

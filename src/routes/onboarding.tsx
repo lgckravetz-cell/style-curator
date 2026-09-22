@@ -7,17 +7,17 @@ import paywallLifestyle from "@/assets/paywall-lifestyle.jpg";
 export const Route = createFileRoute("/onboarding")({
   head: () => ({
     meta: [
-      { title: "Onboarding — Veste" },
+      { title: "Onboarding — Sartoria" },
       {
         name: "description",
         content:
-          "Conte um pouco sobre você para personalizarmos sua experiência de estilo na Veste.",
+          "Conte um pouco sobre você para personalizarmos sua experiência de estilo na Sartoria.",
       },
-      { property: "og:title", content: "Onboarding — Veste" },
+      { property: "og:title", content: "Onboarding — Sartoria" },
       {
         property: "og:description",
         content:
-          "Conte um pouco sobre você para personalizarmos sua experiência de estilo na Veste.",
+          "Conte um pouco sobre você para personalizarmos sua experiência de estilo na Sartoria.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
