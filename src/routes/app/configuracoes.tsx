@@ -1,18 +1,34 @@
 import { ClientOnly, createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { useState } from "react";
 import {
   ArrowLeft,
   Calendar,
   ChevronRight,
   Coins,
+  FileText,
   Lock,
   Mail,
   MessageCircle,
   Share2,
+  ShieldCheck,
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { captureDevelopmentTestError } from "@/lib/sentry-browser";
+import { LEGAL_URL } from "@/lib/legal";
+import { deleteAccount } from "@/lib/account.functions";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 const PAYWALL_STEP = 7;
 
 export const Route = createFileRoute("/app/configuracoes")({
