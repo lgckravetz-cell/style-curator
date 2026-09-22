@@ -237,10 +237,38 @@ function SettingsScreen() {
         <Row
           label="Excluir conta"
           danger
-          onClick={soon}
+          onClick={() => setConfirmOpen(true)}
           trailing={<span />}
         />
       </div>
+
+      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <AlertDialogContent className="rounded-3xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="font-display">Excluir sua conta?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação é irreversível. Suas peças, looks, provas de roupa, conversas com o
+              estilista e sua conta de acesso serão apagados para sempre.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting} className="min-h-[52px] rounded-full">
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              disabled={deleting}
+              onClick={(event) => {
+                event.preventDefault();
+                void confirmDelete();
+              }}
+              className="min-h-[52px] rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleting ? "Excluindo…" : "Excluir conta"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
 
       <ClientOnly>
         {import.meta.env.DEV ? (
