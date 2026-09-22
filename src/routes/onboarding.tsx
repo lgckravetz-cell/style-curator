@@ -106,9 +106,11 @@ function OnboardingFlow() {
   const progress = ((step + 1) / TOTAL_STEPS) * 100;
 
   function choose(option: string) {
-    if (!current) return;
+    if (!current || processing) return;
+    setProcessing(true);
     setAnswers({ ...answers, [current.key]: option });
-    setStep(step + 1);
+    setStep((s) => s + 1);
+    setProcessing(false);
   }
 
   function finishSelfie(value: string) {
