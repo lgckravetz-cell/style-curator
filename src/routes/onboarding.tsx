@@ -4,6 +4,7 @@ import { ArrowLeft, Camera, Check, ChevronRight, Icon, Image, Shirt, ShoppingBag
 import { hatBaseball, trousers } from "@lucide/lab";
 import lookFlatlay from "@/assets/look-flatlay.jpg";
 import paywallLifestyle from "@/assets/paywall-lifestyle.jpg";
+import linenTexture from "@/assets/linen-texture.png";
 
 export const Route = createFileRoute("/onboarding")({
   head: () => ({
