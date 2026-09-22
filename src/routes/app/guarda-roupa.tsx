@@ -35,11 +35,13 @@ function WardrobeScreen() {
   function handleFile(file: File | undefined) {
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = () => {
-      // A peça aparece imediatamente com spinner de "processando" (simulação
-      // da classificação automática por IA, que será integrada depois).
-      const id = addWardrobePiece(reader.result as string);
-      setTimeout(() => markWardrobeProcessed(id), 1500);
+    reader.onload = async () => {
+      // A peça aparece imediatamente com spinner enquanto a foto é enviada
+      // e a peça é gravada no guarda-roupa.
+      const id = await addWardrobePiece(reader.result as string);
+      if (!id) {
+        toast.error("Não foi possível processar essa foto. Tente outra imagem.");
+      }
     };
     reader.readAsDataURL(file);
   }
