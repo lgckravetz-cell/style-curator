@@ -1,8 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Camera, Image, Loader2, Plus, Shirt, X } from "lucide-react";
 import { toast } from "sonner";
-import { addWardrobePiece, useWardrobePieces } from "@/lib/wardrobe";
+import {
+  addWardrobePiece,
+  loadMoreWardrobe,
+  useWardrobeHasMore,
+  useWardrobePieces,
+} from "@/lib/wardrobe";
+import { compressImage, IMAGE_READ_ERROR } from "@/lib/image-compress";
 
 export const Route = createFileRoute("/app/guarda-roupa")({
   head: () => ({
@@ -28,22 +34,35 @@ export const Route = createFileRoute("/app/guarda-roupa")({
 
 function WardrobeScreen() {
   const pieces = useWardrobePieces();
+  const hasMore = useWardrobeHasMore();
   const [showSourceModal, setShowSourceModal] = useState(false);
   const galleryInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
 
-  function handleFile(file: File | undefined) {
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = async () => {
-      // A peça aparece imediatamente com spinner enquanto a foto é enviada
-      // e a peça é gravada no guarda-roupa.
-      const id = await addWardrobePiece(reader.result as string);
-      if (!id) {
-        toast.error("Não foi possível processar essa foto. Tente outra imagem.");
-      }
+  useEffect(() => {
+    if (!showSourceModal) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setShowSourceModal(false);
     };
-    reader.readAsDataURL(file);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [showSourceModal]);
+
+  async function handleFile(file: File | undefined) {
+    if (!file) return;
+    let dataUrl: string;
+    try {
+      dataUrl = await compressImage(file);
+    } catch {
+      toast.error(IMAGE_READ_ERROR);
+      return;
+    }
+    // A peça aparece imediatamente com spinner enquanto a foto é enviada
+    // e a peça é gravada no guarda-roupa.
+    const id = await addWardrobePiece(dataUrl);
+    if (!id) {
+      toast.error("Não foi possível processar essa foto. Tente outra imagem.");
+    }
   }
 
   function simulateError() {
@@ -126,6 +145,16 @@ function WardrobeScreen() {
         </div>
       )}
 
+      {hasMore && (
+        <button
+          type="button"
+          onClick={() => void loadMoreWardrobe()}
+          className="mt-6 flex min-h-[52px] w-full items-center justify-center rounded-full border border-border bg-card text-base font-semibold text-foreground active:scale-[0.98] transition-transform duration-150"
+        >
+          Carregar mais
+        </button>
+      )}
+
       {/* Botão de teste escondido (só para desenvolvimento) */}
       <button
         type="button"
@@ -166,11 +195,15 @@ function WardrobeScreen() {
           onClick={() => setShowSourceModal(false)}
           role="dialog"
           aria-modal="true"
+          aria-labelledby="wardrobe-source-title"
         >
           <div
             className="relative w-full max-w-md rounded-t-3xl bg-background px-6 pb-10 pt-4"
             onClick={(e) => e.stopPropagation()}
           >
+            <h2 id="wardrobe-source-title" className="sr-only">
+              Adicionar foto da peça
+            </h2>
             <div className="mx-auto mb-5 h-1.5 w-10 rounded-full bg-muted" />
             <button
               type="button"
