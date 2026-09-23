@@ -1,0 +1,46 @@
+// Estado de assinatura — só o servidor lê e grava esta tabela.
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { PRO_ENTITLEMENT } from "@/lib/plan-limits";
+
+export type SubscriptionStatus = "active" | "expired" | "canceled";
+
+export async function isPro(userId: string): Promise<boolean> {
+  const { data } = await supabaseAdmin
+    .from("subscriptions")
+    .select("status, expires_at, entitlement")
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (!data) return false;
+  if (data.entitlement && data.entitlement !== PRO_ENTITLEMENT) return false;
+  if (data.status === "active") return true;
+  // Cancelado mantém o acesso até a data de expiração.
+  if (data.status === "canceled" && data.expires_at) {
+    return new Date(data.expires_at).getTime() > Date.now();
+  }
+  return false;
+}
+
+export async function upsertSubscription(input: {
+  userId: string;
+  status: SubscriptionStatus;
+  entitlement: string;
+  expiresAt: string | null;
+}): Promise<void> {
+  const { error } = await supabaseAdmin.from("subscriptions").upsert(
+    {
+      user_id: input.userId,
+      status: input.status,
+      entitlement: input.entitlement,
+      expires_at: input.expiresAt,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "user_id" },
+  );
+  if (error) throw error;
+}
+
+export async function userExists(userId: string): Promise<boolean> {
+  const { data, error } = await supabaseAdmin.auth.admin.getUserById(userId);
+  return !error && Boolean(data?.user);
+}

@@ -609,11 +609,26 @@ function RevealStep({ onContinue }: { onContinue: () => void }) {
 }
 
 function PaywallStep({ onClose }: { onClose: () => void }) {
-  const [plan, setPlan] = useState<"semanal" | "mensal" | "anual">("anual");
+  const [plan, setPlan] = useState<"mensal" | "anual">("anual");
+  // PREÇOS PROVISÓRIOS: serão substituídos pelos valores vindos do RevenueCat
+  // no empacotamento do app (offerings/packages).
   const plans = [
-    { id: "semanal" as const, label: "Semanal", price: "R$ 39,90", period: "/semana", badge: null as string | null },
-    { id: "mensal" as const, label: "Mensal", price: "R$ 79,90", period: "/mês", badge: "Economize 6%" },
-    { id: "anual" as const, label: "Anual", price: "R$ 199,90", period: "/ano", badge: "Economize 58%" },
+    {
+      id: "mensal" as const,
+      label: "Mensal",
+      price: "R$ 29,90",
+      period: "/mês",
+      badge: null as string | null,
+      note: null as string | null,
+    },
+    {
+      id: "anual" as const,
+      label: "Anual",
+      price: "R$ 149,90",
+      period: "/ano",
+      badge: "Economize 58%",
+      note: "R$ 12,49/mês",
+    },
   ];
   const benefits = [
     "Veja qualquer look no seu avatar",
@@ -673,7 +688,7 @@ function PaywallStep({ onClose }: { onClose: () => void }) {
           </div>
 
           {/* Cards de plano */}
-          <div className="mt-6 grid grid-cols-3 gap-3">
+          <div className="mt-6 grid grid-cols-2 gap-3">
             {plans.map((pl) => {
               const selected = plan === pl.id;
               return (
@@ -693,6 +708,11 @@ function PaywallStep({ onClose }: { onClose: () => void }) {
                   <span className="text-sm font-semibold text-foreground">{pl.label}</span>
                   <span className="mt-1 text-base font-extrabold text-foreground">{pl.price}</span>
                   <span className="text-xs text-muted-foreground">{pl.period}</span>
+                  {pl.note && (
+                    <span className="mt-1 text-xs font-medium text-muted-foreground">
+                      {pl.note}
+                    </span>
+                  )}
                 </button>
               );
             })}

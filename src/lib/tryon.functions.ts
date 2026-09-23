@@ -2,13 +2,19 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { newRequestId } from "@/lib/request-id";
 import { captureServerError } from "@/lib/sentry.server";
+import {
+  FREE_TRYON_TOTAL,
+  PAYWALL_REQUIRED_CODE,
+  PRO_TRYON_DAILY,
+  PRO_TRYON_MONTHLY,
+} from "@/lib/plan-limits";
 
 // Provador Virtual real: chama o Fal.ai (Kling Kolors v1.5), guarda o resultado
 // no bucket privado "tryon" e registra a prova em tryon_history.
 
 const WARDROBE_BUCKET = "wardrobe";
 const TRYON_BUCKET = "tryon";
-const DAILY_LIMIT = 5;
+const DAILY_LIMIT = PRO_TRYON_DAILY;
 export const RATE_LIMIT_CODE = "RATE_LIMIT";
 const FAL_MODEL = "fal-ai/kling/v1-5/kolors-virtual-try-on";
 
@@ -50,17 +56,35 @@ export const runTryOn = createServerFn({ method: "POST" })
       throw new Error("O provador virtual não está configurado.");
     }
 
-    // Rate limiting: só provas concluídas com sucesso contam para a cota.
-    const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-    const { count } = await supabase
-      .from("tryon_history")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", userId)
-      .eq("status", "success")
-      .gte("created_at", since);
+    // Limites por plano — só provas concluídas com sucesso contam para a cota.
+    const { isPro } = await import("@/lib/subscription.server");
+    const pro = await isPro(userId);
 
-    if ((count ?? 0) >= DAILY_LIMIT) {
-      throw new Error(`${RATE_LIMIT_CODE}: Limite diário de provas atingido`);
+    const countSuccess = async (since?: string) => {
+      let query = supabase
+        .from("tryon_history")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", userId)
+        .eq("status", "success");
+      if (since) query = query.gte("created_at", since);
+      const { count } = await query;
+      return count ?? 0;
+    };
+
+    if (!pro) {
+      // Gratuito: cota total da conta, não renova.
+      if ((await countSuccess()) >= FREE_TRYON_TOTAL) {
+        throw new Error(`${PAYWALL_REQUIRED_CODE}: Assine o Pro para continuar provando`);
+      }
+    } else {
+      const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+      if ((await countSuccess(dayAgo)) >= DAILY_LIMIT) {
+        throw new Error(`${RATE_LIMIT_CODE}: Limite diário de provas atingido`);
+      }
+      const monthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+      if ((await countSuccess(monthAgo)) >= PRO_TRYON_MONTHLY) {
+        throw new Error(`${RATE_LIMIT_CODE}: Limite mensal de provas atingido`);
+      }
     }
 
     // Peça a provar (RLS garante que é do próprio usuário).
