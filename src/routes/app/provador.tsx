@@ -83,7 +83,7 @@ function TryOnScreen() {
       setErrorMessage(raw.includes("RATE_LIMIT") ? LIMIT_ERROR : raw || GENERIC_ERROR);
       setStatus("error");
     }
-  }, [peca, tryOn]);
+  }, [peca, tryOn, navigate]);
 
   useEffect(() => {
     void start();

@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { Camera, Image as ImageIcon, Paperclip, Send, Shirt, X } from "lucide-react";
@@ -20,6 +20,7 @@ import {
 } from "@/components/ai-elements/prompt-input";
 import { Shimmer } from "@/components/ai-elements/shimmer";
 import { askStylist } from "@/lib/stylist.functions";
+import { PAYWALL_REQUIRED_CODE } from "@/lib/plan-limits";
 
 export const Route = createFileRoute("/app/estilista")({
   head: () => ({
@@ -49,6 +50,8 @@ type ChatMessage =
   | { id: string; role: "assistant"; kind: "text"; text: string }
   | { id: string; role: "assistant"; kind: "empty-wardrobe" };
 
+const PAYWALL_STEP = 7;
+
 const INITIAL_MESSAGES: ChatMessage[] = [
   { id: "welcome", role: "assistant", kind: "text", text: WELCOME },
 ];
@@ -64,6 +67,7 @@ function StylistScreen() {
   const galleryInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const stylist = useServerFn(askStylist);
+  const navigate = useNavigate();
 
   function push(msg: DistributiveOmit<ChatMessage, "id">) {
     setMessages((prev) => [...prev, { ...msg, id: crypto.randomUUID() } as ChatMessage]);
@@ -80,7 +84,9 @@ function StylistScreen() {
       push({ role: "assistant", kind: "text", text: result.reply });
     } catch (error) {
       const raw = error instanceof Error ? error.message : "";
-      if (raw.includes("EMPTY_WARDROBE")) {
+      if (raw.includes(PAYWALL_REQUIRED_CODE)) {
+        navigate({ to: "/onboarding", search: { step: PAYWALL_STEP } });
+      } else if (raw.includes("EMPTY_WARDROBE")) {
         push({ role: "assistant", kind: "empty-wardrobe" });
       } else if (raw.includes("RATE_LIMIT")) {
         push({ role: "assistant", kind: "text", text: LIMIT_ERROR });
