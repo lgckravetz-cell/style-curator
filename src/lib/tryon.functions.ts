@@ -126,8 +126,11 @@ export const runTryOn = createServerFn({ method: "POST" })
       if (message.includes(PAYWALL_REQUIRED_CODE)) {
         throw new Error(`${PAYWALL_REQUIRED_CODE}: Assine o Pro para continuar provando`);
       }
-      if (message.includes(RATE_LIMIT_CODE)) {
-        throw new Error(`${RATE_LIMIT_CODE}: Limite diário de provas atingido`);
+      if (message.includes("RATE_LIMIT_DAILY")) {
+        throw new Error("RATE_LIMIT_DAILY: Limite diário atingido");
+      }
+      if (message.includes("RATE_LIMIT_MONTHLY")) {
+        throw new Error("RATE_LIMIT_MONTHLY: Limite mensal atingido");
       }
       throw error;
     }
