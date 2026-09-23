@@ -130,7 +130,7 @@ function OnboardingFlow() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col bg-background px-6 pb-10 pt-6">
+    <main className="flex min-h-screen flex-col bg-background px-6 pb-[calc(2.5rem+env(safe-area-inset-bottom,0px))] pt-[calc(1.5rem+env(safe-area-inset-top,0px))]">
       {showTopBar && (
         <div className="flex items-center gap-4">
           <button
