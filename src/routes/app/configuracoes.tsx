@@ -6,6 +6,7 @@ import {
   Calendar,
   ChevronRight,
   Coins,
+  CreditCard,
   FileText,
   Lock,
   Mail,
@@ -178,6 +179,11 @@ function SettingsScreen() {
           icon={<Lock size={18} className="text-muted-foreground" />}
           label="Itens bloqueados"
           onClick={() => navigate({ to: "/onboarding", search: { step: PAYWALL_STEP } })}
+        />
+        <Row
+          icon={<CreditCard size={18} className="text-muted-foreground" />}
+          label="Gerenciar assinatura"
+          onClick={() => window.open("https://apps.apple.com/account/subscriptions", "_blank", "noopener,noreferrer")}
         />
         {/* A restauração real de compras entra na etapa de empacotamento (RevenueCat). */}
         <Row
