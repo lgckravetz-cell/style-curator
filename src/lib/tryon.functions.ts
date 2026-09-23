@@ -11,7 +11,6 @@ import {
 
 const WARDROBE_BUCKET = "wardrobe";
 const TRYON_BUCKET = "tryon";
-export const RATE_LIMIT_CODE = "RATE_LIMIT";
 const FAL_MODEL = "fal-ai/kling/v1-5/kolors-virtual-try-on";
 const MAX_RESULT_BYTES = 15 * 1024 * 1024;
 const RESULT_MIME_EXTENSIONS = {
@@ -126,8 +125,11 @@ export const runTryOn = createServerFn({ method: "POST" })
       if (message.includes(PAYWALL_REQUIRED_CODE)) {
         throw new Error(`${PAYWALL_REQUIRED_CODE}: Assine o Pro para continuar provando`);
       }
-      if (message.includes(RATE_LIMIT_CODE)) {
-        throw new Error(`${RATE_LIMIT_CODE}: Limite diário de provas atingido`);
+      if (message.includes("RATE_LIMIT_DAILY")) {
+        throw new Error("RATE_LIMIT_DAILY: Limite diário atingido");
+      }
+      if (message.includes("RATE_LIMIT_MONTHLY")) {
+        throw new Error("RATE_LIMIT_MONTHLY: Limite mensal atingido");
       }
       throw error;
     }

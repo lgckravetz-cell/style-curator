@@ -47,7 +47,7 @@ function getSelfie(): string | null {
 type Status = "loading" | "done" | "error";
 
 const GENERIC_ERROR = "Não conseguimos gerar essa prova agora. Tente novamente.";
-const LIMIT_ERROR = "Limite diário de provas atingido";
+const LIMIT_ERROR = "Limite de provas atingido";
 const PAYWALL_STEP = 7;
 
 function TryOnScreen() {
@@ -80,7 +80,9 @@ function TryOnScreen() {
         navigate({ to: "/onboarding", search: { step: PAYWALL_STEP } });
         return;
       }
-      setErrorMessage(raw.includes("RATE_LIMIT") ? LIMIT_ERROR : raw || GENERIC_ERROR);
+      setErrorMessage(
+        raw.includes("RATE_LIMIT") ? raw.split(": ").slice(1).join(": ") || LIMIT_ERROR : raw || GENERIC_ERROR,
+      );
       setStatus("error");
     }
   }, [peca, tryOn, navigate]);

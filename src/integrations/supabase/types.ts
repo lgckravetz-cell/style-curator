@@ -229,7 +229,13 @@ export type Database = {
     }
     Functions: {
       reserve_usage: {
-        Args: { p_is_pro: boolean; p_kind: string; p_user_id: string }
+        Args: {
+          p_daily_limit: number
+          p_kind: string
+          p_monthly_limit: number
+          p_total_limit: number
+          p_user_id: string
+        }
         Returns: string
       }
     }

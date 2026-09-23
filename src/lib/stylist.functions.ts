@@ -9,7 +9,6 @@ import {
 // Estilista real: conversa com a Anthropic (Claude), com limites por plano
 // (gratuito x Pro) e acesso às peças reais do guarda-roupa.
 
-export const RATE_LIMIT_CODE = "RATE_LIMIT";
 export const EMPTY_WARDROBE_CODE = "EMPTY_WARDROBE";
 const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
 const DEFAULT_MODEL = "claude-sonnet-5";
@@ -172,8 +171,11 @@ export const askStylist = createServerFn({ method: "POST" })
       if (message.includes(PAYWALL_REQUIRED_CODE)) {
         throw new Error(`${PAYWALL_REQUIRED_CODE}: Assine o Pro para continuar conversando`);
       }
-      if (message.includes(RATE_LIMIT_CODE)) {
-        throw new Error(`${RATE_LIMIT_CODE}: Limite diário de mensagens atingido`);
+      if (message.includes("RATE_LIMIT_DAILY")) {
+        throw new Error("RATE_LIMIT_DAILY: Limite diário atingido");
+      }
+      if (message.includes("RATE_LIMIT_MONTHLY")) {
+        throw new Error("RATE_LIMIT_MONTHLY: Limite mensal atingido");
       }
       throw error;
     }
