@@ -5,6 +5,7 @@ import { hatBaseball, trousers } from "@lucide/lab";
 import lookFlatlay from "@/assets/look-flatlay.jpg";
 import paywallLifestyle from "@/assets/paywall-lifestyle.jpg";
 import linenTexture from "@/assets/linen-texture.png";
+import { markOnboardingCompleted } from "@/lib/onboarding";
 
 export const Route = createFileRoute("/onboarding")({
   head: () => ({
