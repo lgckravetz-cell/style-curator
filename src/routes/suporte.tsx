@@ -47,13 +47,13 @@ function SupportPage() {
             </>,
             <>
               <strong className="font-display">Como restauro uma compra?</strong>{" "}
-              Em Configurações > Restaurar compras, dentro do app.
+              Em Configurações {">"} Restaurar compras, dentro do app.
             </>,
             <>
               <strong className="font-display">
                 Como excluo minha conta e meus dados?
               </strong>{" "}
-              Em Configurações > Excluir conta. A exclusão é definitiva.
+              Em Configurações {">"} Excluir conta. A exclusão é definitiva.
             </>,
             <>
               <strong className="font-display">
