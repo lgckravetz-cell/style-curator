@@ -1,6 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, History } from "lucide-react";
-import { useTryOnHistory } from "@/lib/tryon-history";
+import {
+  loadMoreTryOnHistory,
+  useTryOnHistory,
+  useTryOnHistoryHasMore,
+} from "@/lib/tryon-history";
 
 export const Route = createFileRoute("/app/historico")({
   head: () => ({
@@ -25,6 +29,7 @@ export const Route = createFileRoute("/app/historico")({
 function TryOnHistoryScreen() {
   const navigate = useNavigate();
   const entries = useTryOnHistory();
+  const hasMore = useTryOnHistoryHasMore();
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-md flex-col px-6 pb-10 pt-6">
@@ -56,21 +61,32 @@ function TryOnHistoryScreen() {
           </p>
         </div>
       ) : (
-        <div className="mt-6 grid grid-cols-2 gap-3">
-          {entries.map((entry) => (
-            <div
-              key={entry.id}
-              className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-muted"
+        <>
+          <div className="mt-6 grid grid-cols-2 gap-3">
+            {entries.map((entry) => (
+              <div
+                key={entry.id}
+                className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-muted"
+              >
+                <img
+                  src={entry.pieceSrc}
+                  alt="Prova salva"
+                  loading="lazy"
+                  className="h-full w-full object-cover"
+                />
+              </div>
+            ))}
+          </div>
+          {hasMore && (
+            <button
+              type="button"
+              onClick={() => void loadMoreTryOnHistory()}
+              className="mt-6 flex min-h-[52px] w-full items-center justify-center rounded-full border border-border bg-card text-base font-semibold text-foreground active:scale-[0.98] transition-transform duration-150"
             >
-              <img
-                src={entry.pieceSrc}
-                alt="Prova salva"
-                loading="lazy"
-                className="h-full w-full object-cover"
-              />
-            </div>
-          ))}
-        </div>
+              Carregar mais
+            </button>
+          )}
+        </>
       )}
     </main>
   );

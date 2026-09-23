@@ -98,7 +98,8 @@ export const askStylist = createServerFn({ method: "POST" })
         .from("wardrobe_items")
         .select("id, categoria, subcategoria, cor, material, created_at")
         .eq("user_id", userId)
-        .order("created_at", { ascending: true });
+        .order("created_at", { ascending: false })
+        .limit(150);
 
       if (!items || items.length === 0) {
         throw new Error(`${EMPTY_WARDROBE_CODE}: Guarda-roupa vazio`);

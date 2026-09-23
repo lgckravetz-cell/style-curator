@@ -11,9 +11,13 @@ export interface WardrobePiece {
 }
 
 const BUCKET = "wardrobe";
+const PAGE_SIZE = 60;
 const EMPTY: WardrobePiece[] = [];
 
 let pieces: WardrobePiece[] = EMPTY;
+let hasMore = false;
+let offset = 0;
+let loadingMore = false;
 let loaded = false;
 const listeners = new Set<() => void>();
 
@@ -42,26 +46,61 @@ async function signedUrl(path: string): Promise<string> {
   return data?.signedUrl ?? "";
 }
 
-export async function loadWardrobe(): Promise<void> {
-  const { data: auth } = await supabase.auth.getSession();
-  if (!auth.session) {
-    setPieces(EMPTY);
-    return;
+/** Gera todos os links assinados de uma vez e devolve um mapa path -> url. */
+async function signedUrlMap(paths: string[]): Promise<Map<string, string>> {
+  const map = new Map<string, string>();
+  if (paths.length === 0) return map;
+  const { data } = await supabase.storage.from(BUCKET).createSignedUrls(paths, 3600);
+  for (const entry of data ?? []) {
+    if (entry.path && entry.signedUrl) map.set(entry.path, entry.signedUrl);
   }
+  return map;
+}
+
+async function fetchPage(from: number): Promise<WardrobePiece[] | null> {
   const { data, error } = await supabase
     .from("wardrobe_items")
     .select("id, image_url")
-    .order("created_at", { ascending: true });
-  if (error || !data) return;
+    .order("created_at", { ascending: true })
+    .range(from, from + PAGE_SIZE - 1);
+  if (error || !data) return null;
+  const urls = await signedUrlMap(data.map((row) => row.image_url));
+  return data.map((row) => ({
+    id: row.id,
+    src: urls.get(row.image_url) ?? "",
+    processing: false,
+  }));
+}
 
-  const next = await Promise.all(
-    data.map(async (row) => ({
-      id: row.id,
-      src: await signedUrl(row.image_url),
-      processing: false,
-    })),
-  );
-  setPieces(next);
+export async function loadWardrobe(): Promise<void> {
+  const { data: auth } = await supabase.auth.getSession();
+  if (!auth.session) {
+    hasMore = false;
+    offset = 0;
+    setPieces(EMPTY);
+    return;
+  }
+  const page = await fetchPage(0);
+  if (!page) return;
+  offset = page.length;
+  hasMore = page.length === PAGE_SIZE;
+  setPieces(page);
+}
+
+/** Carrega as próximas 60 peças. */
+export async function loadMoreWardrobe(): Promise<void> {
+  if (!hasMore || loadingMore) return;
+  loadingMore = true;
+  try {
+    const page = await fetchPage(offset);
+    if (!page) return;
+    offset += page.length;
+    hasMore = page.length === PAGE_SIZE;
+    const known = new Set(pieces.map((p) => p.id));
+    setPieces([...pieces, ...page.filter((p) => !known.has(p.id))]);
+  } finally {
+    loadingMore = false;
+  }
 }
 
 /** Carrega as peças do banco na primeira montagem e devolve a lista atual. */
@@ -75,16 +114,23 @@ export function useWardrobePieces(): WardrobePiece[] {
   return value;
 }
 
-function dataUrlToBlob(dataUrl: string): { blob: Blob; ext: string } {
-  const [header, base64] = dataUrl.split(",");
-  const mime = (header ?? "").match(/data:(.*?);/)?.[1] ?? "image/jpeg";
+/** Indica se ainda há peças para carregar. */
+export function useWardrobeHasMore(): boolean {
+  return useSyncExternalStore(
+    subscribe,
+    () => hasMore,
+    () => false,
+  );
+}
+
+function dataUrlToBlob(dataUrl: string): Blob {
+  const [, base64] = dataUrl.split(",");
   const bytes = Uint8Array.from(atob(base64 ?? ""), (c) => c.charCodeAt(0));
-  const ext = mime.split("/")[1]?.replace("jpeg", "jpg") ?? "jpg";
-  return { blob: new Blob([bytes], { type: mime }), ext };
+  return new Blob([bytes], { type: "image/jpeg" });
 }
 
 /**
- * Envia a foto para o Storage e grava a peça no banco.
+ * Envia a foto (já comprimida em JPEG) para o Storage e grava a peça no banco.
  * A peça aparece na hora com spinner (processing) e é confirmada depois.
  */
 export async function addWardrobePiece(dataUrl: string): Promise<string | null> {
@@ -99,12 +145,12 @@ export async function addWardrobePiece(dataUrl: string): Promise<string | null> 
   }
 
   try {
-    const { blob, ext } = dataUrlToBlob(dataUrl);
-    const path = `${userId}/${crypto.randomUUID()}.${ext}`;
+    const blob = dataUrlToBlob(dataUrl);
+    const path = `${userId}/${crypto.randomUUID()}.jpg`;
 
     const { error: uploadError } = await supabase.storage
       .from(BUCKET)
-      .upload(path, blob, { contentType: blob.type, upsert: false });
+      .upload(path, blob, { contentType: "image/jpeg", upsert: false });
     if (uploadError) throw uploadError;
 
     const { data: inserted, error: insertError } = await supabase
@@ -114,6 +160,7 @@ export async function addWardrobePiece(dataUrl: string): Promise<string | null> 
       .single();
     if (insertError || !inserted) throw insertError;
 
+    offset += 1;
     const url = (await signedUrl(path)) || dataUrl;
     setPieces(
       pieces.map((p) =>
@@ -129,5 +176,8 @@ export async function addWardrobePiece(dataUrl: string): Promise<string | null> 
 
 export async function removeWardrobePiece(id: string): Promise<void> {
   const { error } = await supabase.from("wardrobe_items").delete().eq("id", id);
-  if (!error) setPieces(pieces.filter((p) => p.id !== id));
+  if (!error) {
+    offset = Math.max(0, offset - 1);
+    setPieces(pieces.filter((p) => p.id !== id));
+  }
 }

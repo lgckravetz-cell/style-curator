@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { Camera, Image as ImageIcon, Paperclip, Send, Shirt, X } from "lucide-react";
 import {
@@ -64,6 +64,15 @@ function StylistScreen() {
   const [messages, setMessages] = useState<ChatMessage[]>(INITIAL_MESSAGES);
   const [typing, setTyping] = useState(false);
   const [showSourceModal, setShowSourceModal] = useState(false);
+
+  useEffect(() => {
+    if (!showSourceModal) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setShowSourceModal(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [showSourceModal]);
   const galleryInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const stylist = useServerFn(askStylist);
@@ -252,11 +261,15 @@ function StylistScreen() {
           onClick={() => setShowSourceModal(false)}
           role="dialog"
           aria-modal="true"
+          aria-labelledby="stylist-source-title"
         >
           <div
             className="relative w-full max-w-md rounded-t-3xl bg-background px-6 pb-[calc(2.5rem+env(safe-area-inset-bottom,0px))] pt-4"
             onClick={(e) => e.stopPropagation()}
           >
+            <h2 id="stylist-source-title" className="sr-only">
+              Escanear look
+            </h2>
             <div className="mx-auto mb-5 h-1.5 w-10 rounded-full bg-muted" />
             <button
               type="button"
