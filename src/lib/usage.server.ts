@@ -36,12 +36,13 @@ export async function reserveUsage(
   isPro: boolean,
 ): Promise<string> {
   const limits = limitsFor(kind, isPro);
+  // Os parâmetros aceitam NULL no banco; os tipos gerados marcam como number.
   const { data, error } = await supabaseAdmin.rpc("reserve_usage", {
     p_user_id: userId,
     p_kind: kind,
-    p_total_limit: limits.total,
-    p_daily_limit: limits.daily,
-    p_monthly_limit: limits.monthly,
+    p_total_limit: limits.total as number,
+    p_daily_limit: limits.daily as number,
+    p_monthly_limit: limits.monthly as number,
   });
 
   if (error) throw error;
