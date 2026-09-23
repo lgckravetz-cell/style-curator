@@ -13,7 +13,11 @@ export async function isPro(userId: string): Promise<boolean> {
 
   if (!data) return false;
   if (data.entitlement && data.entitlement !== PRO_ENTITLEMENT) return false;
-  if (data.status === "active") return true;
+  // Ativo só conta como Pro se expires_at for nulo ou estiver no futuro.
+  if (data.status === "active") {
+    if (!data.expires_at) return true;
+    return new Date(data.expires_at).getTime() > Date.now();
+  }
   // Cancelado mantém o acesso até a data de expiração.
   if (data.status === "canceled" && data.expires_at) {
     return new Date(data.expires_at).getTime() > Date.now();
