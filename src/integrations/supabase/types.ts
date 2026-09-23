@@ -51,6 +51,7 @@ export type Database = {
           created_at: string
           estilo: string | null
           id: string
+          onboarding_completed: boolean
           updated_at: string
           username: string | null
         }
@@ -60,6 +61,7 @@ export type Database = {
           created_at?: string
           estilo?: string | null
           id: string
+          onboarding_completed?: boolean
           updated_at?: string
           username?: string | null
         }
@@ -69,6 +71,7 @@ export type Database = {
           created_at?: string
           estilo?: string | null
           id?: string
+          onboarding_completed?: boolean
           updated_at?: string
           username?: string | null
         }
