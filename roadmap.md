@@ -8,6 +8,7 @@
 - [x] Correções de tipagem (shimmer, button icon-sm) — build OK
 
 ## A fazer (futuro)
+- [ ] Endurecimento de segurança — reservas atômicas, validação de entrada, download seguro e cabeçalhos globais
 - [ ] Integração real de IA (chat Estilista, classificação de peças, provador virtual)
 - [ ] Integração real de assinatura (paywall com valores reais)
 - [ ] Nome real do app ("Veste" é placeholder)
