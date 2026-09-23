@@ -2,11 +2,17 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { newRequestId } from "@/lib/request-id";
 import { captureServerError } from "@/lib/sentry.server";
+import {
+  FREE_STYLIST_TOTAL,
+  PAYWALL_REQUIRED_CODE,
+  PRO_STYLIST_DAILY,
+  PRO_STYLIST_MONTHLY,
+} from "@/lib/plan-limits";
 
-// Estilista real: conversa com a Anthropic (Claude), com limite de 30 mensagens
-// por usuário a cada 24h e acesso às peças reais do guarda-roupa.
+// Estilista real: conversa com a Anthropic (Claude), com limites por plano
+// (gratuito x Pro) e acesso às peças reais do guarda-roupa.
 
-const DAILY_LIMIT = 30;
+const DAILY_LIMIT = PRO_STYLIST_DAILY;
 export const RATE_LIMIT_CODE = "RATE_LIMIT";
 export const EMPTY_WARDROBE_CODE = "EMPTY_WARDROBE";
 const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
@@ -62,17 +68,35 @@ export const askStylist = createServerFn({ method: "POST" })
       throw new Error("O estilista ainda não está configurado. Salve a chave da Anthropic para ativá-lo.");
     }
 
-    // Rate limiting: 30 mensagens do usuário por 24 horas.
-    const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-    const { count } = await supabase
-      .from("stylist_messages")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", userId)
-      .eq("role", "user")
-      .gte("created_at", since);
+    // Limites por plano — contam só as mensagens do usuário que foram respondidas.
+    const { isPro } = await import("@/lib/subscription.server");
+    const pro = await isPro(userId);
 
-    if ((count ?? 0) >= DAILY_LIMIT) {
-      throw new Error(`${RATE_LIMIT_CODE}: Limite diário de mensagens atingido`);
+    const countMessages = async (since?: string) => {
+      let query = supabase
+        .from("stylist_messages")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", userId)
+        .eq("role", "user");
+      if (since) query = query.gte("created_at", since);
+      const { count } = await query;
+      return count ?? 0;
+    };
+
+    if (!pro) {
+      // Gratuito: cota total da conta, não renova.
+      if ((await countMessages()) >= FREE_STYLIST_TOTAL) {
+        throw new Error(`${PAYWALL_REQUIRED_CODE}: Assine o Pro para continuar conversando`);
+      }
+    } else {
+      const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+      if ((await countMessages(dayAgo)) >= DAILY_LIMIT) {
+        throw new Error(`${RATE_LIMIT_CODE}: Limite diário de mensagens atingido`);
+      }
+      const monthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+      if ((await countMessages(monthAgo)) >= PRO_STYLIST_MONTHLY) {
+        throw new Error(`${RATE_LIMIT_CODE}: Limite mensal de mensagens atingido`);
+      }
     }
 
     const userText = (data.text ?? "").trim();
