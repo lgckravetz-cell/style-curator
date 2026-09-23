@@ -421,7 +421,7 @@ function BottomSheet({
       aria-modal="true"
     >
       <div
-        className="relative w-full max-w-md rounded-t-3xl bg-background px-6 pb-10 pt-4"
+        className="relative w-full max-w-md rounded-t-3xl bg-background px-6 pb-[calc(2.5rem+env(safe-area-inset-bottom,0px))] pt-4"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mx-auto mb-5 h-1.5 w-10 rounded-full bg-muted" />
@@ -429,7 +429,7 @@ function BottomSheet({
           type="button"
           onClick={onClose}
           aria-label="Fechar"
-          className="cursor-pointer absolute right-5 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-muted text-muted-foreground active:scale-[0.98] transition-transform duration-150"
+          className="cursor-pointer absolute right-5 top-[calc(1rem+env(safe-area-inset-top,0px))] flex h-9 w-9 items-center justify-center rounded-full bg-muted text-muted-foreground active:scale-[0.98] transition-transform duration-150"
         >
           <X size={16} />
         </button>
