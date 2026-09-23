@@ -1,10 +1,11 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, Camera, Check, ChevronRight, Icon, Image, Shirt, ShoppingBag, User, X } from "lucide-react";
 import { hatBaseball, trousers } from "@lucide/lab";
 import lookFlatlay from "@/assets/look-flatlay.jpg";
 import paywallLifestyle from "@/assets/paywall-lifestyle.jpg";
 import linenTexture from "@/assets/linen-texture.png";
+import { PRIVACY_PATH, TERMS_PATH } from "@/lib/legal";
 import { markOnboardingCompleted } from "@/lib/onboarding";
 
 export const Route = createFileRoute("/onboarding")({
@@ -571,7 +572,7 @@ function RevealStep({ onContinue }: { onContinue: () => void }) {
       />
       <div className="relative">
       <h1 className="mt-8 text-center font-display text-2xl font-extrabold leading-tight tracking-tight text-foreground">
-        Nossos usuários criam mais de 1.000 looks com o que já têm
+        Monte looks novos com as roupas que você já tem
       </h1>
 
       {/* Carrossel horizontal de miniaturas */}
@@ -630,6 +631,7 @@ function PaywallStep({ onClose }: { onClose: () => void }) {
       note: "R$ 12,49/mês",
     },
   ];
+  const selectedPrice = plan === "mensal" ? "R$ 29,90" : "R$ 149,90";
   const benefits = [
     "Veja qualquer look no seu avatar",
     "Encontre roupas a partir de qualquer foto",
@@ -720,7 +722,7 @@ function PaywallStep({ onClose }: { onClose: () => void }) {
 
           {/* Termos de renovação automática */}
           <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
-            A assinatura renova automaticamente até ser cancelada. Cancele a qualquer momento nas configurações da conta.
+            Cobrança de {selectedPrice} por {plan === "mensal" ? "mês" : "ano"} na sua conta Apple. A assinatura renova automaticamente, a menos que seja cancelada pelo menos 24 horas antes do fim do período atual. Gerencie ou cancele em Ajustes do iPhone {">"} seu nome {">"} Assinaturas.
           </p>
         </div>
       </div>
@@ -734,13 +736,25 @@ function PaywallStep({ onClose }: { onClose: () => void }) {
         >
           Continuar
         </button>
-        <div className="mt-3 flex justify-center gap-6">
+        <div className="mt-3 flex flex-wrap justify-center gap-x-6 gap-y-2">
           <button type="button" className="cursor-pointer text-xs text-muted-foreground underline underline-offset-4 active:scale-[0.98] transition-transform duration-150">
             Restaurar compras
           </button>
           <button type="button" className="cursor-pointer text-xs text-muted-foreground underline underline-offset-4 active:scale-[0.98] transition-transform duration-150">
             Resgatar código
           </button>
+          <Link
+            to={TERMS_PATH}
+            className="cursor-pointer text-xs text-muted-foreground underline underline-offset-4 active:scale-[0.98] transition-transform duration-150"
+          >
+            Termos de Uso
+          </Link>
+          <Link
+            to={PRIVACY_PATH}
+            className="cursor-pointer text-xs text-muted-foreground underline underline-offset-4 active:scale-[0.98] transition-transform duration-150"
+          >
+            Privacidade
+          </Link>
         </div>
       </div>
     </div>

@@ -15,16 +15,28 @@ export const deleteAccount = createServerFn({ method: "POST" })
     try {
       // 1) Arquivos do usuário nos buckets privados (pasta = userId)
       for (const bucket of BUCKETS) {
-        const { data: files, error: listError } = await supabaseAdmin.storage
-          .from(bucket)
-          .list(userId, { limit: 1000 });
-        if (listError) {
-          console.error(`[delete-account] ${requestId} list ${bucket}:`, listError.message);
-          continue;
+        const paths: string[] = [];
+        let offset = 0;
+
+        while (true) {
+          const { data: files, error: listError } = await supabaseAdmin.storage
+            .from(bucket)
+            .list(userId, { limit: 100, offset });
+          if (listError) {
+            console.error(`[delete-account] ${requestId} list ${bucket}:`, listError.message);
+            break;
+          }
+
+          const page = files ?? [];
+          paths.push(...page.map((file) => `${userId}/${file.name}`));
+          if (page.length < 100) break;
+          offset += page.length;
         }
-        const paths = (files ?? []).map((f) => `${userId}/${f.name}`);
-        if (paths.length > 0) {
-          const { error: removeError } = await supabaseAdmin.storage.from(bucket).remove(paths);
+
+        for (let index = 0; index < paths.length; index += 100) {
+          const { error: removeError } = await supabaseAdmin.storage
+            .from(bucket)
+            .remove(paths.slice(index, index + 100));
           if (removeError) {
             console.error(`[delete-account] ${requestId} remove ${bucket}:`, removeError.message);
           }
