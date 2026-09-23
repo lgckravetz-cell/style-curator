@@ -631,7 +631,7 @@ function PaywallStep({ onClose }: { onClose: () => void }) {
       note: "R$ 12,49/mês",
     },
   ];
-  const selectedPlan = plans.find((item) => item.id === plan) ?? plans[1];
+  const selectedPrice = plan === "mensal" ? "R$ 29,90" : "R$ 149,90";
   const benefits = [
     "Veja qualquer look no seu avatar",
     "Encontre roupas a partir de qualquer foto",
@@ -722,7 +722,7 @@ function PaywallStep({ onClose }: { onClose: () => void }) {
 
           {/* Termos de renovação automática */}
           <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
-            Cobrança de {selectedPlan.price} por {plan === "mensal" ? "mês" : "ano"} na sua conta Apple. A assinatura renova automaticamente, a menos que seja cancelada pelo menos 24 horas antes do fim do período atual. Gerencie ou cancele em Ajustes do iPhone {">"} seu nome {">"} Assinaturas.
+            Cobrança de {selectedPrice} por {plan === "mensal" ? "mês" : "ano"} na sua conta Apple. A assinatura renova automaticamente, a menos que seja cancelada pelo menos 24 horas antes do fim do período atual. Gerencie ou cancele em Ajustes do iPhone {">"} seu nome {">"} Assinaturas.
           </p>
         </div>
       </div>
