@@ -31,6 +31,21 @@ export async function upsertSubscription(input: {
   entitlement: string;
   expiresAt: string | null;
 }): Promise<void> {
+  // Proteção contra eventos fora de ordem: se já existe um registro com
+  // expires_at mais recente que o do evento recebido, não sobrescreve.
+  // Eventos sem expires_at seguem gravando normalmente.
+  if (input.expiresAt) {
+    const { data: existing } = await supabaseAdmin
+      .from("subscriptions")
+      .select("expires_at")
+      .eq("user_id", input.userId)
+      .maybeSingle();
+    if (existing?.expires_at) {
+      const existingTs = new Date(existing.expires_at).getTime();
+      const eventTs = new Date(input.expiresAt).getTime();
+      if (existingTs > eventTs) return;
+    }
+  }
   const { error } = await supabaseAdmin.from("subscriptions").upsert(
     {
       user_id: input.userId,
