@@ -1,8 +1,10 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { lovable } from "@/integrations/lovable/index";
+import { supabase } from "@/integrations/supabase/client";
 import { PRIVACY_PATH, TERMS_PATH } from "@/lib/legal";
+import { hasCompletedOnboarding } from "@/lib/onboarding";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -59,6 +61,41 @@ function GoogleIcon() {
 
 function LoginScreen() {
   const [loading, setLoading] = useState<"apple" | "google" | null>(null);
+  const [checkingSession, setCheckingSession] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const { data } = await supabase.auth.getSession();
+        const user = data.session?.user;
+        if (!user) {
+          if (!cancelled) setCheckingSession(false);
+          return;
+        }
+        const done = await hasCompletedOnboarding(user.id);
+        if (cancelled) return;
+        navigate({ to: done ? "/app/guarda-roupa" : "/onboarding", replace: true });
+      } catch {
+        if (!cancelled) setCheckingSession(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [navigate]);
+
+  if (checkingSession) {
+    return (
+      <main
+        className="flex min-h-screen items-center justify-center bg-background"
+        aria-busy="true"
+      />
+    );
+  }
 
   async function signIn(provider: "apple" | "google") {
     setLoading(provider);

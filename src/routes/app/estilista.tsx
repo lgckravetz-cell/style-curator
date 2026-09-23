@@ -138,6 +138,7 @@ function StylistScreen() {
                   <img
                     src={msg.src}
                     alt="Look enviado"
+                    loading="lazy"
                     className="max-h-56 w-auto rounded-2xl object-cover"
                   />
                 ) : (

@@ -5,6 +5,7 @@ import { hatBaseball, trousers } from "@lucide/lab";
 import lookFlatlay from "@/assets/look-flatlay.jpg";
 import paywallLifestyle from "@/assets/paywall-lifestyle.jpg";
 import linenTexture from "@/assets/linen-texture.png";
+import { markOnboardingCompleted } from "@/lib/onboarding";
 
 export const Route = createFileRoute("/onboarding")({
   head: () => ({
@@ -129,6 +130,16 @@ function OnboardingFlow() {
     if (step > 0) setStep(step - 1);
   }
 
+  async function finishOnboarding() {
+    // Registra a conclusão no perfil antes de entrar no app.
+    try {
+      await markOnboardingCompleted();
+    } catch {
+      // Falha ao gravar não deve travar a entrada no app.
+    }
+    navigate({ to: "/app/guarda-roupa" });
+  }
+
   return (
     <main className="flex min-h-screen flex-col bg-background px-6 pb-[calc(2.5rem+env(safe-area-inset-bottom,0px))] pt-[calc(1.5rem+env(safe-area-inset-top,0px))]">
       {showTopBar && (
@@ -156,7 +167,7 @@ function OnboardingFlow() {
       ) : isRevealStep ? (
         <RevealStep onContinue={() => setStep((s) => s + 1)} />
       ) : isPaywallStep ? (
-        <PaywallStep onClose={() => navigate({ to: "/app/guarda-roupa" })} />
+        <PaywallStep onClose={finishOnboarding} />
       ) : isSelfieStep ? (
         <SelfieStep onDone={finishSelfie} />
       ) : (

@@ -103,6 +103,7 @@ function WardrobeScreen() {
                 <img
                   src={piece.src}
                   alt="Peça do guarda-roupa"
+                  loading="lazy"
                   className="h-full w-full object-cover"
                 />
                 {piece.processing && (

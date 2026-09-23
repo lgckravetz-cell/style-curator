@@ -65,6 +65,7 @@ function TryOnHistoryScreen() {
               <img
                 src={entry.pieceSrc}
                 alt="Prova salva"
+                loading="lazy"
                 className="h-full w-full object-cover"
               />
             </div>
