@@ -154,8 +154,8 @@ export const runTryOn = createServerFn({ method: "POST" })
       const validatedResultUrl = validateFalResultUrl(resultUrl);
       const imageResponse = await fetch(validatedResultUrl);
       if (!imageResponse.ok) throw new Error("Não conseguimos baixar o resultado");
-      const contentType = (imageResponse.headers.get("content-type") ?? "")
-        .split(";", 1)[0]
+      const contentType = ((imageResponse.headers.get("content-type") ?? "")
+        .split(";", 1)[0] ?? "")
         .trim()
         .toLowerCase();
       const ext = RESULT_MIME_EXTENSIONS[contentType as keyof typeof RESULT_MIME_EXTENSIONS];
