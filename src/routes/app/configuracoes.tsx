@@ -10,6 +10,7 @@ import {
   Lock,
   Mail,
   MessageCircle,
+  RotateCcw,
   Share2,
   ShieldCheck,
 } from "lucide-react";
@@ -177,6 +178,12 @@ function SettingsScreen() {
           icon={<Lock size={18} className="text-muted-foreground" />}
           label="Itens bloqueados"
           onClick={() => navigate({ to: "/onboarding", search: { step: PAYWALL_STEP } })}
+        />
+        {/* A restauração real de compras entra na etapa de empacotamento (RevenueCat). */}
+        <Row
+          icon={<RotateCcw size={18} className="text-muted-foreground" />}
+          label="Restaurar compras"
+          onClick={() => toast("Disponível em breve")}
         />
       </div>
 

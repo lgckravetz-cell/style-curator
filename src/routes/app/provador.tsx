@@ -3,6 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useCallback, useEffect, useState } from "react";
 import { ArrowLeft, History, RotateCcw, User } from "lucide-react";
 import { refreshTryOnHistory } from "@/lib/tryon-history";
+import { PAYWALL_REQUIRED_CODE } from "@/lib/plan-limits";
 import { runTryOn } from "@/lib/tryon.functions";
 import { STORAGE_KEY } from "@/routes/onboarding";
 
@@ -47,6 +48,7 @@ type Status = "loading" | "done" | "error";
 
 const GENERIC_ERROR = "Não conseguimos gerar essa prova agora. Tente novamente.";
 const LIMIT_ERROR = "Limite diário de provas atingido";
+const PAYWALL_STEP = 7;
 
 function TryOnScreen() {
   const navigate = useNavigate();
@@ -74,6 +76,10 @@ function TryOnScreen() {
       refreshTryOnHistory();
     } catch (error) {
       const raw = error instanceof Error ? error.message : "";
+      if (raw.includes(PAYWALL_REQUIRED_CODE)) {
+        navigate({ to: "/onboarding", search: { step: PAYWALL_STEP } });
+        return;
+      }
       setErrorMessage(raw.includes("RATE_LIMIT") ? LIMIT_ERROR : raw || GENERIC_ERROR);
       setStatus("error");
     }
