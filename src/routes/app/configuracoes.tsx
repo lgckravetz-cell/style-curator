@@ -17,7 +17,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { captureDevelopmentTestError } from "@/lib/sentry-browser";
-import { PRIVACY_PATH, TERMS_PATH } from "@/lib/legal";
+import { PRIVACY_PATH, SUPPORT_PATH, TERMS_PATH } from "@/lib/legal";
 import { deleteAccount } from "@/lib/account.functions";
 import {
   AlertDialog,
@@ -88,6 +88,7 @@ function SettingsScreen() {
 
   const openPrivacy = () => navigate({ to: PRIVACY_PATH });
   const openTerms = () => navigate({ to: TERMS_PATH });
+  const openSupport = () => navigate({ to: SUPPORT_PATH });
 
   async function confirmDelete() {
     setDeleting(true);
@@ -189,7 +190,7 @@ function SettingsScreen() {
         <Row
           icon={<Mail size={18} className="text-muted-foreground" />}
           label="Fale com a gente"
-          onClick={soon}
+          onClick={openSupport}
         />
       </div>
 
