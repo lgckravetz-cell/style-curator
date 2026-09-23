@@ -688,7 +688,7 @@ function PaywallStep({ onClose }: { onClose: () => void }) {
           </div>
 
           {/* Cards de plano */}
-          <div className="mt-6 grid grid-cols-3 gap-3">
+          <div className="mt-6 grid grid-cols-2 gap-3">
             {plans.map((pl) => {
               const selected = plan === pl.id;
               return (
@@ -708,6 +708,11 @@ function PaywallStep({ onClose }: { onClose: () => void }) {
                   <span className="text-sm font-semibold text-foreground">{pl.label}</span>
                   <span className="mt-1 text-base font-extrabold text-foreground">{pl.price}</span>
                   <span className="text-xs text-muted-foreground">{pl.period}</span>
+                  {pl.note && (
+                    <span className="mt-1 text-xs font-medium text-muted-foreground">
+                      {pl.note}
+                    </span>
+                  )}
                 </button>
               );
             })}
