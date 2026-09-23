@@ -3,10 +3,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { newRequestId } from "@/lib/request-id";
 import { captureServerError } from "@/lib/sentry.server";
 import {
-  FREE_TRYON_TOTAL,
   PAYWALL_REQUIRED_CODE,
-  PRO_TRYON_DAILY,
-  PRO_TRYON_MONTHLY,
 } from "@/lib/plan-limits";
 
 // Provador Virtual real: chama o Fal.ai (Kling Kolors v1.5), guarda o resultado
@@ -14,9 +11,14 @@ import {
 
 const WARDROBE_BUCKET = "wardrobe";
 const TRYON_BUCKET = "tryon";
-const DAILY_LIMIT = PRO_TRYON_DAILY;
 export const RATE_LIMIT_CODE = "RATE_LIMIT";
 const FAL_MODEL = "fal-ai/kling/v1-5/kolors-virtual-try-on";
+const MAX_RESULT_BYTES = 15 * 1024 * 1024;
+const RESULT_MIME_EXTENSIONS = {
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+} as const;
 
 type TryOnInput = {
   wardrobeItemId: string;
@@ -31,6 +33,19 @@ function decodeDataUrl(dataUrl: string): { bytes: Uint8Array; contentType: strin
   for (let i = 0; i < binary.length; i += 1) bytes[i] = binary.charCodeAt(i);
   const ext = contentType.split("/")[1]?.replace("jpeg", "jpg") ?? "jpg";
   return { bytes, contentType, ext };
+}
+
+function validateFalResultUrl(value: string): URL {
+  const url = new URL(value);
+  const hostname = url.hostname.toLowerCase();
+  const allowedHost =
+    hostname === "fal.media" ||
+    hostname.endsWith(".fal.media") ||
+    hostname.endsWith(".fal.run");
+  if (url.protocol !== "https:" || !allowedHost) {
+    throw new Error("Fal.ai devolveu uma URL de imagem inválida");
+  }
+  return url;
 }
 
 export const runTryOn = createServerFn({ method: "POST" })
@@ -54,37 +69,6 @@ export const runTryOn = createServerFn({ method: "POST" })
         operation: "configuration",
       });
       throw new Error("O provador virtual não está configurado.");
-    }
-
-    // Limites por plano — só provas concluídas com sucesso contam para a cota.
-    const { isPro } = await import("@/lib/subscription.server");
-    const pro = await isPro(userId);
-
-    const countSuccess = async (since?: string) => {
-      let query = supabase
-        .from("tryon_history")
-        .select("id", { count: "exact", head: true })
-        .eq("user_id", userId)
-        .eq("status", "success");
-      if (since) query = query.gte("created_at", since);
-      const { count } = await query;
-      return count ?? 0;
-    };
-
-    if (!pro) {
-      // Gratuito: cota total da conta, não renova.
-      if ((await countSuccess()) >= FREE_TRYON_TOTAL) {
-        throw new Error(`${PAYWALL_REQUIRED_CODE}: Assine o Pro para continuar provando`);
-      }
-    } else {
-      const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-      if ((await countSuccess(dayAgo)) >= DAILY_LIMIT) {
-        throw new Error(`${RATE_LIMIT_CODE}: Limite diário de provas atingido`);
-      }
-      const monthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
-      if ((await countSuccess(monthAgo)) >= PRO_TRYON_MONTHLY) {
-        throw new Error(`${RATE_LIMIT_CODE}: Limite mensal de provas atingido`);
-      }
     }
 
     // Peça a provar (RLS garante que é do próprio usuário).
@@ -132,6 +116,23 @@ export const runTryOn = createServerFn({ method: "POST" })
     const avatarUrl = avatarSigned?.signedUrl;
     if (!avatarUrl) throw new Error("Não conseguimos ler a sua selfie.");
 
+    const { isPro } = await import("@/lib/subscription.server");
+    const { releaseUsage, reserveUsage } = await import("@/lib/usage.server");
+    let reservationId: string;
+    try {
+      reservationId = await reserveUsage(userId, "tryon", await isPro(userId));
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "";
+      if (message.includes(PAYWALL_REQUIRED_CODE)) {
+        throw new Error(`${PAYWALL_REQUIRED_CODE}: Assine o Pro para continuar provando`);
+      }
+      if (message.includes(RATE_LIMIT_CODE)) {
+        throw new Error(`${RATE_LIMIT_CODE}: Limite diário de provas atingido`);
+      }
+      throw error;
+    }
+
+    let releaseReservationOnFailure = true;
     try {
       const response = await fetch(`https://fal.run/${FAL_MODEL}`, {
         method: "POST",
@@ -150,11 +151,25 @@ export const runTryOn = createServerFn({ method: "POST" })
       const resultUrl = payload.image?.url;
       if (!resultUrl) throw new Error("Fal.ai não devolveu imagem");
 
-      const imageResponse = await fetch(resultUrl);
+      const validatedResultUrl = validateFalResultUrl(resultUrl);
+      const imageResponse = await fetch(validatedResultUrl);
       if (!imageResponse.ok) throw new Error("Não conseguimos baixar o resultado");
-      const imageBytes = new Uint8Array(await imageResponse.arrayBuffer());
-      const contentType = imageResponse.headers.get("content-type") ?? "image/png";
-      const ext = contentType.split("/")[1]?.replace("jpeg", "jpg") ?? "png";
+      const contentType = (imageResponse.headers.get("content-type") ?? "")
+        .split(";", 1)[0]
+        .trim()
+        .toLowerCase();
+      const ext = RESULT_MIME_EXTENSIONS[contentType as keyof typeof RESULT_MIME_EXTENSIONS];
+      if (!ext) throw new Error("Fal.ai devolveu um tipo de imagem inválido");
+      const declaredSize = Number(imageResponse.headers.get("content-length"));
+      if (Number.isFinite(declaredSize) && declaredSize > MAX_RESULT_BYTES) {
+        throw new Error("Fal.ai devolveu uma imagem acima de 15 MB");
+      }
+      const imageBuffer = await imageResponse.arrayBuffer();
+      if (imageBuffer.byteLength > MAX_RESULT_BYTES) {
+        throw new Error("Fal.ai devolveu uma imagem acima de 15 MB");
+      }
+      const imageBytes = new Uint8Array(imageBuffer);
+      releaseReservationOnFailure = false;
       const resultPath = `${userId}/${crypto.randomUUID()}.${ext}`;
 
       const { error: uploadError } = await supabase.storage
@@ -176,6 +191,13 @@ export const runTryOn = createServerFn({ method: "POST" })
 
       return { imageUrl: signed?.signedUrl ?? "", path: resultPath };
     } catch (error) {
+      if (releaseReservationOnFailure) {
+        try {
+          await releaseUsage(reservationId);
+        } catch (releaseError) {
+          console.error(`[try-on][${requestId}] falha ao liberar reserva`, releaseError);
+        }
+      }
       console.error(`[try-on][${requestId}] falha`, error);
       captureServerError(error, {
         requestId,
