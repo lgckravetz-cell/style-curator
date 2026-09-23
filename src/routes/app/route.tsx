@@ -16,13 +16,13 @@ const NAV_ITEMS = [
 function AppLayout() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <div className="flex-1 pb-24">
+      <div className="flex-1 pb-[calc(6rem+env(safe-area-inset-bottom,0px))]">
         <Outlet />
       </div>
 
       {/* Navegação inferior fixa */}
       <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background">
-        <div className="mx-auto flex max-w-md items-stretch justify-between px-2 pb-4 pt-2">
+        <div className="mx-auto flex max-w-md items-stretch justify-between px-2 pb-[calc(1rem+env(safe-area-inset-bottom,0px))] pt-2">
           {NAV_ITEMS.map(({ to, label, icon: Icon }) => (
             <Link
               key={to}
