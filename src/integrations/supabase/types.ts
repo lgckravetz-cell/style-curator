@@ -163,6 +163,27 @@ export type Database = {
           },
         ]
       }
+      usage_reservations: {
+        Row: {
+          created_at: string
+          id: string
+          kind: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kind: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kind?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       wardrobe_items: {
         Row: {
           categoria: string
@@ -207,7 +228,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      reserve_usage: {
+        Args: { p_is_pro: boolean; p_kind: string; p_user_id: string }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never

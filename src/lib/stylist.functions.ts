@@ -3,20 +3,19 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { newRequestId } from "@/lib/request-id";
 import { captureServerError } from "@/lib/sentry.server";
 import {
-  FREE_STYLIST_TOTAL,
   PAYWALL_REQUIRED_CODE,
-  PRO_STYLIST_DAILY,
-  PRO_STYLIST_MONTHLY,
 } from "@/lib/plan-limits";
 
 // Estilista real: conversa com a Anthropic (Claude), com limites por plano
 // (gratuito x Pro) e acesso às peças reais do guarda-roupa.
 
-const DAILY_LIMIT = PRO_STYLIST_DAILY;
 export const RATE_LIMIT_CODE = "RATE_LIMIT";
 export const EMPTY_WARDROBE_CODE = "EMPTY_WARDROBE";
 const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
 const DEFAULT_MODEL = "claude-sonnet-5";
+const MAX_TEXT_LENGTH = 1000;
+const MAX_IMAGE_BASE64_LENGTH = 7_000_000;
+const VALID_IMAGE_DATA_URL = /^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/]*={0,2})$/;
 
 const SYSTEM_PROMPT = `Você é o Estilista da Cabidy, um consultor de moda pessoal brasileiro.
 Fale em português do Brasil, em tom acolhedor, direto e prático.
@@ -61,9 +60,19 @@ export const askStylist = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: StylistInput) => {
     const text = typeof input?.text === "string" ? input.text.trim() : "";
-    const hasImage = typeof input?.imageDataUrl === "string" && input.imageDataUrl.startsWith("data:");
+    if (text.length > MAX_TEXT_LENGTH) {
+      throw new Error("Mensagem muito longa (máx. 1000 caracteres).");
+    }
+    let hasImage = false;
+    if (typeof input?.imageDataUrl === "string") {
+      const match = input.imageDataUrl.match(VALID_IMAGE_DATA_URL);
+      if (!match || (match[2]?.length ?? 0) > MAX_IMAGE_BASE64_LENGTH) {
+        throw new Error("Imagem inválida ou muito grande (máx. 5 MB).");
+      }
+      hasImage = true;
+    }
     if (!text && !hasImage && !input?.createLook) throw new Error("Escreva uma mensagem.");
-    return input;
+    return { ...input, text };
   })
   .handler(async ({ data, context }) => {
     const requestId = newRequestId();
@@ -78,37 +87,6 @@ export const askStylist = createServerFn({ method: "POST" })
         operation: "configuration",
       });
       throw new Error("O estilista ainda não está configurado. Salve a chave da Anthropic para ativá-lo.");
-    }
-
-    // Limites por plano — contam só as mensagens do usuário que foram respondidas.
-    const { isPro } = await import("@/lib/subscription.server");
-    const pro = await isPro(userId);
-
-    const countMessages = async (since?: string) => {
-      let query = supabase
-        .from("stylist_messages")
-        .select("id", { count: "exact", head: true })
-        .eq("user_id", userId)
-        .eq("role", "user");
-      if (since) query = query.gte("created_at", since);
-      const { count } = await query;
-      return count ?? 0;
-    };
-
-    if (!pro) {
-      // Gratuito: cota total da conta, não renova.
-      if ((await countMessages()) >= FREE_STYLIST_TOTAL) {
-        throw new Error(`${PAYWALL_REQUIRED_CODE}: Assine o Pro para continuar conversando`);
-      }
-    } else {
-      const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-      if ((await countMessages(dayAgo)) >= DAILY_LIMIT) {
-        throw new Error(`${RATE_LIMIT_CODE}: Limite diário de mensagens atingido`);
-      }
-      const monthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
-      if ((await countMessages(monthAgo)) >= PRO_STYLIST_MONTHLY) {
-        throw new Error(`${RATE_LIMIT_CODE}: Limite mensal de mensagens atingido`);
-      }
     }
 
     const userText = (data.text ?? "").trim();
@@ -183,50 +161,65 @@ export const askStylist = createServerFn({ method: "POST" })
       }))
       .filter((m) => m.content[0]!.text.length > 0);
 
-    const response = await fetch(ANTHROPIC_URL, {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "x-api-key": apiKey,
-        "anthropic-version": "2023-06-01",
-      },
-      body: JSON.stringify({
-        model: process.env["ANTHROPIC_MODEL"] ?? DEFAULT_MODEL,
-        max_tokens: 900,
-        system: SYSTEM_PROMPT,
-        messages: [...priorMessages, { role: "user", content: blocks }],
-      }),
-    });
+    const { isPro } = await import("@/lib/subscription.server");
+    const { releaseUsage, reserveUsage } = await import("@/lib/usage.server");
+    let reservationId: string;
+    try {
+      reservationId = await reserveUsage(userId, "stylist", await isPro(userId));
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "";
+      if (message.includes(PAYWALL_REQUIRED_CODE)) {
+        throw new Error(`${PAYWALL_REQUIRED_CODE}: Assine o Pro para continuar conversando`);
+      }
+      if (message.includes(RATE_LIMIT_CODE)) {
+        throw new Error(`${RATE_LIMIT_CODE}: Limite diário de mensagens atingido`);
+      }
+      throw error;
+    }
 
-    if (!response.ok) {
-      await response.text();
-      const providerError = new Error(`Anthropic falhou com status ${response.status}`);
-      console.error(`[stylist-chat][${requestId}] Anthropic falhou`, response.status);
-      captureServerError(providerError, {
+    let reply: string;
+    try {
+      const response = await fetch(ANTHROPIC_URL, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "x-api-key": apiKey,
+          "anthropic-version": "2023-06-01",
+        },
+        body: JSON.stringify({
+          model: process.env["ANTHROPIC_MODEL"] ?? DEFAULT_MODEL,
+          max_tokens: 900,
+          system: SYSTEM_PROMPT,
+          messages: [...priorMessages, { role: "user", content: blocks }],
+        }),
+      });
+
+      if (!response.ok) {
+        await response.text();
+        throw new Error(`Anthropic falhou com status ${response.status}`);
+      }
+
+      const payload = (await response.json()) as {
+        content?: Array<{ type: string; text?: string }>;
+      };
+      reply = (payload.content ?? [])
+        .filter((block) => block.type === "text" && block.text)
+        .map((block) => block.text ?? "")
+        .join("\n")
+        .trim();
+      if (!reply) throw new Error("Resposta Anthropic sem texto");
+    } catch (error) {
+      try {
+        await releaseUsage(reservationId);
+      } catch (releaseError) {
+        console.error(`[stylist-chat][${requestId}] falha ao liberar reserva`, releaseError);
+      }
+      console.error(`[stylist-chat][${requestId}] Anthropic falhou`, error);
+      captureServerError(error, {
         requestId,
         area: "stylist-chat",
         userId,
         operation: "anthropic-request",
-      });
-      throw new Error("Não conseguimos falar com o estilista agora. Tente novamente.");
-    }
-
-    const payload = (await response.json()) as {
-      content?: Array<{ type: string; text?: string }>;
-    };
-    const reply = (payload.content ?? [])
-      .filter((block) => block.type === "text" && block.text)
-      .map((block) => block.text!)
-      .join("\n")
-      .trim();
-
-    if (!reply) {
-      console.error(`[stylist-chat][${requestId}] resposta da Anthropic sem texto utilizável`);
-      captureServerError(new Error("Resposta Anthropic sem texto"), {
-        requestId,
-        area: "stylist-chat",
-        userId,
-        operation: "anthropic-response",
       });
       throw new Error("Não conseguimos falar com o estilista agora. Tente novamente.");
     }
