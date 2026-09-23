@@ -11,7 +11,6 @@ import {
 
 const WARDROBE_BUCKET = "wardrobe";
 const TRYON_BUCKET = "tryon";
-export const RATE_LIMIT_CODE = "RATE_LIMIT";
 const FAL_MODEL = "fal-ai/kling/v1-5/kolors-virtual-try-on";
 const MAX_RESULT_BYTES = 15 * 1024 * 1024;
 const RESULT_MIME_EXTENSIONS = {

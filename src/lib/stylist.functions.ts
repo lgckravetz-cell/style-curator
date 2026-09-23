@@ -9,7 +9,6 @@ import {
 // Estilista real: conversa com a Anthropic (Claude), com limites por plano
 // (gratuito x Pro) e acesso às peças reais do guarda-roupa.
 
-export const RATE_LIMIT_CODE = "RATE_LIMIT";
 export const EMPTY_WARDROBE_CODE = "EMPTY_WARDROBE";
 const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
 const DEFAULT_MODEL = "claude-sonnet-5";
