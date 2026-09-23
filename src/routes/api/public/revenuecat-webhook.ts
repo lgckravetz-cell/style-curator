@@ -78,10 +78,7 @@ export const Route = createFileRoute("/api/public/revenuecat-webhook")({
           : null;
         if (!status) return new Response("ignored", { status: 200 });
 
-        const { isPro: _unused, upsertSubscription, userExists } = await import(
-          "@/lib/subscription.server"
-        );
-        void _unused;
+        const { upsertSubscription, userExists } = await import("@/lib/subscription.server");
 
         if (!(await userExists(userId))) {
           return new Response("ignored", { status: 200 });
