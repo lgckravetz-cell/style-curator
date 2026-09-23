@@ -13,7 +13,11 @@ export async function isPro(userId: string): Promise<boolean> {
 
   if (!data) return false;
   if (data.entitlement && data.entitlement !== PRO_ENTITLEMENT) return false;
-  if (data.status === "active") return true;
+  // Ativo só conta como Pro se expires_at for nulo ou estiver no futuro.
+  if (data.status === "active") {
+    if (!data.expires_at) return true;
+    return new Date(data.expires_at).getTime() > Date.now();
+  }
   // Cancelado mantém o acesso até a data de expiração.
   if (data.status === "canceled" && data.expires_at) {
     return new Date(data.expires_at).getTime() > Date.now();
@@ -27,6 +31,21 @@ export async function upsertSubscription(input: {
   entitlement: string;
   expiresAt: string | null;
 }): Promise<void> {
+  // Proteção contra eventos fora de ordem: se já existe um registro com
+  // expires_at mais recente que o do evento recebido, não sobrescreve.
+  // Eventos sem expires_at seguem gravando normalmente.
+  if (input.expiresAt) {
+    const { data: existing } = await supabaseAdmin
+      .from("subscriptions")
+      .select("expires_at")
+      .eq("user_id", input.userId)
+      .maybeSingle();
+    if (existing?.expires_at) {
+      const existingTs = new Date(existing.expires_at).getTime();
+      const eventTs = new Date(input.expiresAt).getTime();
+      if (existingTs > eventTs) return;
+    }
+  }
   const { error } = await supabaseAdmin.from("subscriptions").upsert(
     {
       user_id: input.userId,
