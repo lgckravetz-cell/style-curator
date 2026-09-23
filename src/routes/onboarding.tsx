@@ -638,7 +638,7 @@ function PaywallStep({ onClose }: { onClose: () => void }) {
             type="button"
             onClick={onClose}
             aria-label="Fechar"
-            className="cursor-pointer absolute left-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-foreground/40 text-white backdrop-blur active:scale-[0.98] transition-transform duration-150"
+            className="cursor-pointer absolute left-4 top-[calc(1rem+env(safe-area-inset-top,0px))] flex h-10 w-10 items-center justify-center rounded-full bg-foreground/40 text-white backdrop-blur active:scale-[0.98] transition-transform duration-150"
           >
             <X size={20} />
           </button>
