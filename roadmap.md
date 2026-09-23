@@ -6,7 +6,6 @@
 - [x] Provador Virtual — loading skeleton, resultado, salvar no histórico, erro com retry
 - [x] Histórico de provas — grade 2 colunas, link no Perfil
 - [x] Correções de tipagem (shimmer, button icon-sm) — build OK
-- [x] Conformidade App Store — alegações, paywall, assinatura, exclusão paginada e segurança do Estilista
 
 ## A fazer (futuro)
 - [ ] Integração real de IA (chat Estilista, classificação de peças, provador virtual)
