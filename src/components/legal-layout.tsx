@@ -18,7 +18,7 @@ export function LegalLayout({
         <Link
           to="/"
           aria-label="Voltar"
-          className="cursor-pointer flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-foreground active:scale-[0.98] transition-transform duration-150"
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-foreground active:scale-[0.98] transition-transform duration-150"
         >
           <ArrowLeft size={18} strokeWidth={1.5} />
         </Link>

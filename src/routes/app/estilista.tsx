@@ -41,8 +41,7 @@ const WELCOME =
 
 const GENERIC_ERROR =
   "Não conseguimos falar com o estilista agora. Tente novamente.";
-const LIMIT_ERROR =
-  "Você atingiu o limite de 30 mensagens nas últimas 24 horas. Tente novamente amanhã.";
+const LIMIT_ERROR = "Você atingiu o limite de mensagens. Tente novamente mais tarde.";
 
 type ChatMessage =
   | { id: string; role: "user"; kind: "text"; text: string }
@@ -98,7 +97,11 @@ function StylistScreen() {
       } else if (raw.includes("EMPTY_WARDROBE")) {
         push({ role: "assistant", kind: "empty-wardrobe" });
       } else if (raw.includes("RATE_LIMIT")) {
-        push({ role: "assistant", kind: "text", text: LIMIT_ERROR });
+        push({
+          role: "assistant",
+          kind: "text",
+          text: raw.split(": ").slice(1).join(": ") || LIMIT_ERROR,
+        });
       } else {
         push({ role: "assistant", kind: "text", text: raw || GENERIC_ERROR });
       }

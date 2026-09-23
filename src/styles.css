@@ -168,3 +168,12 @@
     pointer-events: none;
   }
 }
+
+/* Cursor de ponteiro em todos os elementos clicáveis (evita depender de classe utilitária). */
+button:not(:disabled),
+[role="button"],
+a[href],
+label[for],
+select {
+  cursor: pointer;
+}
