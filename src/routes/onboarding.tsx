@@ -4,7 +4,8 @@ import { ArrowLeft, Camera, Check, ChevronRight, Icon, Image, Shirt, ShoppingBag
 import { hatBaseball, trousers } from "@lucide/lab";
 import lookFlatlay from "@/assets/look-flatlay.jpg";
 import paywallLifestyle from "@/assets/paywall-lifestyle.jpg";
-import linenTexture from "@/assets/linen-texture.png";
+import linenTexture from "@/assets/linen-texture.jpg";
+import { compressImage, IMAGE_READ_ERROR, prefersReducedMotion } from "@/lib/image-compress";
 import { PRIVACY_PATH, TERMS_PATH } from "@/lib/legal";
 import { markOnboardingCompleted } from "@/lib/onboarding";
 
@@ -115,10 +116,14 @@ function OnboardingFlow() {
     setAnswers({ ...answers, [current.key]: option });
     // Aguarda 200ms com a opção destacada antes de avançar,
     // bloqueando novos cliques meanwhile (processing === true).
-    window.setTimeout(() => {
-      setStep((s) => s + 1);
-      setProcessing(false);
-    }, 200);
+    // Com movimento reduzido, a transição é instantânea.
+    window.setTimeout(
+      () => {
+        setStep((s) => s + 1);
+        setProcessing(false);
+      },
+      prefersReducedMotion() ? 0 : 200,
+    );
   }
 
   function finishSelfie(value: string) {
@@ -234,11 +239,13 @@ function SelfieStep({ onDone }: { onDone: (value: string) => void }) {
   const galleryInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
 
-  function handleFile(file: File | undefined) {
+  async function handleFile(file: File | undefined) {
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => setPhoto(reader.result as string);
-    reader.readAsDataURL(file);
+    try {
+      setPhoto(await compressImage(file));
+    } catch {
+      toast.error(IMAGE_READ_ERROR);
+    }
   }
 
   return (
@@ -344,7 +351,10 @@ function SelfieStep({ onDone }: { onDone: (value: string) => void }) {
 
       {/* Modal: escolher origem da foto */}
       {showSourceModal && (
-        <BottomSheet onClose={() => setShowSourceModal(false)}>
+        <BottomSheet titleId="selfie-source-title" onClose={() => setShowSourceModal(false)}>
+          <h2 id="selfie-source-title" className="sr-only">
+            Escolher foto da selfie
+          </h2>
           <div className="flex flex-col gap-3">
             <button
               type="button"
@@ -381,9 +391,9 @@ function SelfieStep({ onDone }: { onDone: (value: string) => void }) {
 
       {/* Modal: confirmar pulo */}
       {showSkipModal && (
-        <BottomSheet onClose={() => setShowSkipModal(false)}>
+        <BottomSheet titleId="selfie-skip-title" onClose={() => setShowSkipModal(false)}>
           <div className="flex flex-col">
-            <h2 className="font-display text-xl font-extrabold text-foreground">
+            <h2 id="selfie-skip-title" className="font-display text-xl font-extrabold text-foreground">
               Antes de pular…
             </h2>
             <div className="mt-4 flex flex-col gap-2">
@@ -421,16 +431,27 @@ function SelfieStep({ onDone }: { onDone: (value: string) => void }) {
 function BottomSheet({
   children,
   onClose,
+  titleId,
 }: {
   children: React.ReactNode;
   onClose: () => void;
+  titleId: string;
 }) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-end justify-center bg-foreground/40"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
+      aria-labelledby={titleId}
     >
       <div
         className="relative w-full max-w-md rounded-t-3xl bg-background px-6 pb-[calc(2.5rem+env(safe-area-inset-bottom,0px))] pt-4"
